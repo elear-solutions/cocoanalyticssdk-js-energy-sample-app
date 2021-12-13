@@ -16,7 +16,7 @@
 5. Get energy consumption data for each zone using fetchData API in analytics SDK.
 6. Display data in required charts.
 
-## API's requiqures to achive this application
+## API's requires to achive this application
 1. Get access to COCO
    1. Use SDK for coco login
       * Coco.init() - Initialize the SDK with client configuration
@@ -48,4 +48,4 @@
 
 
 ## Note
-1. All API's detailed description available on link https://docs.getcoco.buzz/restful-api
+1. All API's detailed description available at https://docs.getcoco.buzz/restful-api
