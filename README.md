@@ -26,7 +26,6 @@
       * Coco.api() - Make protected resource requests
 
    2. Use Login API's of coco
-      * https://api.getcoco.buzz/v1.0/auth/login
       * https://api.getcoco.buzz/v1.0/oauth/authorize
       * https://api.getcoco.buzz/v1.0/oauth/token
 2. Get List of networks of a user
