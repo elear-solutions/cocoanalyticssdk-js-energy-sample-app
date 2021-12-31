@@ -1,0 +1,83 @@
+<div class="energy-consumption">
+	<div class="flexbox-div">
+		<div class="component flexbox xmr-2">
+			<div class="frame">
+				<img src="../../../../assets/scalableVectorGraphics/user-profile.svg" class="img-responsive-56">
+			</div>
+			<div class="product-description">
+				<div style="justify-content:space-between">
+					<label style="flex: 0 0 366px" class="product-name">Welcome to <label class="network-name">Flat-503,
+							Energy Consumption</label></label>
+					<div class="count-name">
+						<span>5 Zones </span><span class="chip-data">|</span>
+						<span>6 Resource</span>
+					</div>
+				</div>
+			</div>
+			<div style="width:40%;xmargin-top:-15px" class="text-right">
+				<button style="margin-right:20px"
+					[ngClass]="this.selectedFilter == 'Hourly' ? 'btn_zone_active' : 'btn_zone_inactive'"
+					(click)="getChartQuery('Hourly')" mdbWavesEffect> Hourly </button>
+				<button style="margin-right:20px"
+					[ngClass]="this.selectedFilter == 'Daily' ? 'btn_zone_active' : 'btn_zone_inactive'"
+					(click)="getChartQuery('Daily')" mdbWavesEffect> Daily </button>
+				<button [ngClass]="this.selectedFilter == 'Monthly' ? 'btn_zone_active' : 'btn_zone_inactive'"
+					(click)="getChartQuery('Monthly')" mdbWavesEffect> Monthly </button>
+			</div>
+		</div>
+
+		<div class="custom-classic-tabs">
+			<mdb-tabset id="overallConsumed" #staticTabs [buttonClass]="'classic-tabs'" [contentClass]="'card'"
+				(getActiveTab)="selectMainActiveTab($event)" class="classic-tabs">
+				<mdb-tab tabOrder="1" heading="Overall Consumed">
+					<div class="container-fluid p-0">
+						<!-- /* 16:9 Aspect Ratio * -->
+						<div class="w-100  d-flex" style="height:400px">
+							<div style="width:60%;height:100%" class="mr-3 bg-white">
+								<app-bar-chart chartType="bar" [query]="totalHomeConsumptionQuery" [timePeriod]="selectedFilter"
+									title="Total Home Consumption">
+								</app-bar-chart>
+							</div>
+							<div style="width:40%;height:100%" class="bg-white">
+								<app-doughnut-chart chartType="doughnut" [query]="energyConsumptionByZonesQuery"
+									[timePeriod]="this.selectedFilter" title="Energy Consumed By Zones">
+								</app-doughnut-chart>
+							</div>
+						</div>
+
+						<div class="w-100  d-flex mt-3" style="height:400px">
+							<div style="width:60%;height:100%" class="mr-3 bg-white">
+								<app-line-chart (compareDateRange)="setCompareDateRange($event)" chartType="line"
+									[query]="monthlyConsumptionComparisonQuery" [timePeriod]="selectedFilter"
+									title="Total Monthly Comparisons">
+								</app-line-chart>
+							</div>
+							<div style="width:40%;height:100%" class="bg-white">
+								<app-half-doughnut chartType="line" [query]="monthlyConsumptionComparisonQuery"
+									[timePeriod]="selectedFilter" title="Current Energy Consumed">
+								</app-half-doughnut>
+							</div>
+						</div>
+					</div>
+				</mdb-tab>
+				<mdb-tab tabOrder="2" heading="Zone & Resource Consumed">
+					<mdb-tabset *ngIf="this.selectedMainTab == 1" id="overallConsumed" #staticTabZones
+						[buttonClass]="'classic-tabs'" [contentClass]="'card'" xgetActiveTab="onZoneClick($event)"
+						class="classic-tabs">
+						<mdb-tab *ngFor="let zone of zones; let i=index;" tabOrder="1" [heading]="zone.zoneName"
+							(select)="onZoneClick(zone.zoneId,i)">
+							<div *ngIf="this.selectedZone == zone.zoneId">
+								<app-resource-in-zones-chart chartType="doughnut" [query]="zonesAndResourcesConsumedQuery"
+									[timePeriod]="this.selectedFilter" title="">
+								</app-resource-in-zones-chart>
+							</div>
+						</mdb-tab>
+					</mdb-tabset>
+
+				</mdb-tab>
+				<mdb-tab tabOrder="3" heading="Comparisons" xselect="setActiveTab(1)">
+				</mdb-tab>
+			</mdb-tabset>
+		</div>
+	</div>
+</div>

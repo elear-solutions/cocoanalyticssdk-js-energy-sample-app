@@ -1,0 +1,146 @@
+<div class="smart-energy-main">
+  <div *ngIf="this.errorMessage" class="message-div-error text-left flexbox mb-2">
+    <div class="flexbox-title">
+      <img src="../../../assets/scalableVectorGraphics/exclamation.svg">
+      {{errorMessage}}
+    </div>
+  </div>
+  <div class="section-1">
+    <div class="title-div">
+      <span class="cp title">
+        <span>
+          <img height="40px" width="40px" class="profile-image"
+            *ngIf="this.userDetails && this.userDetails['profileImageURL']" [src]="this.userDetails['profileImageURL']"
+            height="54px" width="54px" style="margin-right:15px">
+          <img *ngIf="!this.userDetails && !this.userDetails['profileImageURL']"
+            src="../../../assets/scalableVectorGraphics/default_image_upload.svg" height="54px" width="54px"
+            style="margin-right:15px">
+
+          <span style="font-weight:400">Welcome to </span>COCO Analytics</span>
+      </span>
+
+    </div>
+    <div class="filters d-flex">
+      <div>
+        <div class="form-group">
+          <label for="name" class="control-label">NETWORK NAME <span class="star">*</span></label>
+          <input readonly matInput [value]="selectedNetwork.networkName" (click)="framenetwork.show()"
+            class="custom-select-56 form-control"
+            [ngClass]="!selectedNetwork.networkName && this.submitted == true ? 'custom-select-56 form-control custom-select-56-error' :'custom-select form-control custom-select-56'"
+            placeholder="Choose a Network">
+          <div class="mt-1 error-message-div hidden">
+            <p xngIf="!selectedNetwork.networkName && this.submitted == true" class="errorMessage">
+              <img class="img-add" src="../../../assets/scalableVectorGraphics/exclamation.svg"> This field is
+              required.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div style="width:40%;margin-top:40px" class="text-right">
+        <button style="margin-right:20px"
+          [ngClass]="this.selectedFilter == 'Hourly' ? 'btn_zone_active' : 'btn_zone_inactive'"
+          xclick="getChartQuery('Hourly')" mdbWavesEffect> Hourly </button>
+        <button style="margin-right:20px"
+          [ngClass]="this.selectedFilter == 'Daily' ? 'btn_zone_active' : 'btn_zone_inactive'"
+          xclick="getChartQuery('Daily')" mdbWavesEffect> Daily </button>
+        <button [ngClass]="this.selectedFilter == 'Monthly' ? 'btn_zone_active' : 'btn_zone_inactive'"
+          xclick="getChartQuery('Monthly')" mdbWavesEffect> Monthly </button>
+      </div>
+
+    </div>
+    <div class="custom-classic-tabs" style="margin-top:-30px">
+      <mdb-tabset id="overallConsumed" #staticTabs [buttonClass]="'classic-tabs'" [contentClass]="'card'"
+        xgetActiveTab="selectMainActiveTab($event)" class="classic-tabs">
+        <mdb-tab xtabOrder="1" heading="Overall Consumed">
+          <div class="container-fluid p-0">
+            <!-- /* 16:9 Aspect Ratio * -->
+            <div class="w-100  d-flex" style="height:400px">
+              <div style="width:60%;height:100%" class="mr-3 bg-white">
+                <!-- <app-bar-chart chartType="bar" [query]="totalHomeConsumptionQuery" [timePeriod]="selectedFilter"
+                  title="Total Home Consumption">
+                </app-bar-chart> -->
+              </div>
+              <div style="width:40%;height:100%" class="bg-white">
+                <!-- <app-doughnut-chart chartType="doughnut" [query]="energyConsumptionByZonesQuery"
+                  [timePeriod]="this.selectedFilter" title="Energy Consumed By Zones">
+                </app-doughnut-chart> -->
+              </div>
+            </div>
+
+            <div class="w-100  d-flex mt-3" style="height:400px">
+              <div style="width:60%;height:100%" class="mr-3 bg-white">
+                <!-- <app-line-chart (compareDateRange)="setCompareDateRange($event)" chartType="line"
+                  [query]="monthlyConsumptionComparisonQuery" [timePeriod]="selectedFilter"
+                  title="Total Monthly Comparisons">
+                </app-line-chart> -->
+              </div>
+              <div style="width:40%;height:100%" class="bg-white">
+                <!-- <app-half-doughnut chartType="line" [query]="monthlyConsumptionComparisonQuery"
+                  [timePeriod]="selectedFilter" title="Current Energy Consumed">
+                </app-half-doughnut> -->
+              </div>
+            </div>
+          </div>
+        </mdb-tab>
+        <mdb-tab xtabOrder=2 heading="Zone & Resource Consumed">
+          <mdb-tabset xngIf="this.selectedMainTab == 1" id="overallConsumed" #staticTabZones
+            [buttonClass]="'classic-tabs'" [contentClass]="'card'" xgetActiveTab="onZoneClick($event)"
+            class="classic-tabs">
+            <!-- <mdb-tab *ngFor="let zone of zones; let i=index;" tabOrder="1" [heading]="zone.zoneName"
+              (select)="onZoneClick(zone.zoneId,i)">
+              <div *ngIf="this.selectedZone == zone.zoneId">
+                <app-resource-in-zones-chart chartType="doughnut" [query]="zonesAndResourcesConsumedQuery"
+                  [timePeriod]="this.selectedFilter" title="">
+                </app-resource-in-zones-chart>
+              </div> 
+        </mdb-tab>-->
+          </mdb-tabset>
+
+        </mdb-tab>
+        <mdb-tab xtabOrder=3 heading="Comparisons" xselect="setActiveTab(1)">
+        </mdb-tab>
+      </mdb-tabset>
+    </div>
+  </div>
+</div>
+<div mdbModal id="framenetwork" #framenetwork="mdbModal" class="modal fade top" tabindex="-1" role="dialog"
+  aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="count_network">
+          <h4 class="modal-title w-100">Choose a Network Name </h4>
+          <div style="height:30px">
+            <span class="modal-info" *ngIf="networks && networks.length != 1">{{networks.length}} Networks</span>
+            <span class="modal-info" *ngIf="networks && networks.length == 1">{{networks.length}} Network</span>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="framenetwork.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div id="searchAssignUser">
+        <mat-form-field appearance="outline" id="searchUser" style="background-color:#FAFAFA;border-radius:15px">
+          <input style="border:none" matInput placeholder="Search Network Name..." aria-label="User"
+            [formControl]="searchNetworkCtrl" class="example-left-align">
+          <span matPrefix><img class="pr-2" src="../../../assets/scalableVectorGraphics/search.svg">&nbsp;</span>
+          <span matSuffix *ngIf="this.searchNetworkCtrl.value != undefined && searchNetworkCtrl.value.length > 0">
+            <img class="pr-2" src="../../../assets/scalableVectorGraphics/modal_close_icon.svg"
+              (click)="resetNetworkSearch()" style="cursor:pointer">
+          </span>
+        </mat-form-field>
+      </div>
+      <div>
+        <div class="row modal-network">
+          <div [ngClass]="selectedNetwork.networkName == network.networkName ? 'col-network-active' : 'col-network'"
+            *ngFor="let network of networks">
+            <div class="card-details" (click)="selectNetwork(network);framenetwork.hide()">
+              <div class="network-number">{{network.networkName}}</div>
+              <!-- <div class="network-detail">{{network.categoryName}} | {{propertyDetails.name}}</div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
