@@ -113,7 +113,7 @@ export class DemoComponent implements AfterViewInit {
     }
   }
   getNetworkZones() {
-    this.propertyManagerService.getZoneNetworkList(this.selectedNetwork.networkId).then(
+    this.networkService.getZoneNetworkList(this.selectedNetwork.networkId).then(
       (data: any) => {
         this.zones = data.response.zones;
         this.tempZones = data.response.zones;
