@@ -2,9 +2,11 @@
 	<div class="d-flex" style="justify-content:space-between">
 		<label class="title">{{ title }}</label>
 		<div>
-			<div mdbDropdown class= "btn-group xcol-4 mr-3" style="width:145px">
-				<button style="height:44px;" id="custom-dropdown-toggle2"  mdbDropdownToggle type="button" mdbBtn  class="form-control" mdbWavesEffect >
-					<span class="dropdown-btn-text" ><img class="img-firmware mr-2" style="margin-top:-2px" src="../../../assets/scalableVectorGraphics/dot-green.svg">{{this.startMonth}}</span>
+			<div mdbDropdown class="btn-group xcol-4 mr-3" style="width:145px">
+				<button style="height:44px;" id="custom-dropdown-toggle2" mdbDropdownToggle type="button" mdbBtn
+					class="form-control" mdbWavesEffect>
+					<span class="dropdown-btn-text"><img class="img-firmware mr-2" style="margin-top:-2px"
+							src="../../../assets/scalableVectorGraphics/dot-green.svg">{{this.startMonth}}</span>
 					<span xngIf="this.mode != 'edit'" class="dropdown-toggle" style="float:right">
 					</span>
 				</button>
@@ -12,9 +14,11 @@
 					<a class="dropdown-item" (click)="selectStartDate(option)" *ngFor="let option of options">{{option.label}}</a>
 				</div>
 			</div>
-			<div mdbDropdown class= "btn-group" style="width:145px;">
-				<button style="height:44px;" id="custom-dropdown-toggle2"  mdbDropdownToggle type="button" mdbBtn  class="form-control" mdbWavesEffect >
-					<span class="dropdown-btn-text"><img class="img-firmware mr-2" style="margin-top:-2px" src="../../../assets/scalableVectorGraphics/dot-yellow.svg">{{this.endMonth}}</span>
+			<div mdbDropdown class="btn-group" style="width:145px;">
+				<button style="height:44px;" id="custom-dropdown-toggle2" mdbDropdownToggle type="button" mdbBtn
+					class="form-control" mdbWavesEffect>
+					<span class="dropdown-btn-text"><img class="img-firmware mr-2" style="margin-top:-2px"
+							src="../../../assets/scalableVectorGraphics/dot-yellow.svg">{{this.endMonth}}</span>
 					<span xngIf="this.mode != 'edit'" class="dropdown-toggle" style="float:right">
 					</span>
 				</button>
@@ -30,8 +34,8 @@
 				<span class="sr-only">Loading...</span>
 			</div>
 		</div>
-		<canvas *ngIf="ready && showChart" baseChart style="height:250px" [datasets]="chartData" [labels]="chartLabels" [options]="chartOptions"
-		[colors]="barChartColors" [chartType]="chartType">
-	</canvas>
-</div>
+		<canvas *ngIf="ready && showChart" baseChart style="height:250px" [datasets]="chartData" [labels]="chartLabels"
+			[options]="chartOptions" [colors]="barChartColors" [chartType]="chartType">
+		</canvas>
+	</div>
 </div>

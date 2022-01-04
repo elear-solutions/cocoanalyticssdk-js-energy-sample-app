@@ -17,27 +17,9 @@ export class BarChartComponent implements OnChanges {
   title = "";
   ready: boolean = false;
 
-  // public barChartOptions: ChartOptions = {
-  //   responsive: true,
-  // };
-
-  // Chart.pluginService.register({
-  //   beforeDraw: function (chart, easing) {
-  //     if (chart.config.options.chartArea && chart.config.options.chartArea.backgroundColor) {
-  //       var helpers = Chart.helpers;
-  //       var ctx = chart.chart.ctx;
-  //       var chartArea = chart.chartArea;
-
-  //       ctx.save();
-  //       ctx.fillStyle = chart.config.options.chartArea.backgroundColor;
-  //       ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
-  //       ctx.restore();
-  //     }
-  //   }
-  // });
-
   public barChartOptions: any = {
     responsive: true,
+    maintainAspectRatio: false,
     //  ...this.barChartOptions,
     options: {
       chartArea: {
@@ -61,14 +43,6 @@ export class BarChartComponent implements OnChanges {
       yAxes: [{
         stacked: true,
         ticks: {
-          // callback: function (label, index) {
-          //   // Hide the label of every 2nd dataset
-          //   // return index % 2 === 0 ? this.getLabelForValue(label) : '';
-          //   // return index % 2 === 0 ? label.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '';
-
-          //   // return index % 2 === 0 ? 'aaa' : 'bbb';
-          // },
-
           callback: function (label: { toString: () => string; }, index: any, labels: any) {
             // return label.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + " kWh";
             return label.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "";
@@ -80,18 +54,15 @@ export class BarChartComponent implements OnChanges {
       display: false
     }
   };
-
   public barChartLabels: Label[] = [];
   public barChartType!: any;
   public barChartLegend = true;
   public barChartPlugins: any[] = [];
   public barChartColors: any[] = [];
-  alertThreshold = 3500;
-
   public barChartData: any[] = [
     { data: [], label: '' },
   ];
-
+  alertThreshold = 3500;
   constructor() { }
 
   ngOnChanges(): void {
@@ -99,21 +70,14 @@ export class BarChartComponent implements OnChanges {
     this.barChartLabels = [];
     this.barChartColors = [];
 
-    console.log("in chart ");
-    console.log(this.dataset);
+
     if (this.dataset && this.dataset.data) {
-
-      if (this.graphType == "bar") {
-        this.setBarChartColors();
-      }
-      else {
-        this.setBarChartColors2();
-      }
-
+      this.setBarChartColors();
+      console.log("in chart ");
+      console.log(this.dataset);
 
       // this.barChartData[0].label=this.selectedResource.name;
       for (var i = 0; i < this.dataset.data.length; i++) {
-
         this.barChartData[0].data.push(
           this.dataset.data[i].value
         );
@@ -133,11 +97,19 @@ export class BarChartComponent implements OnChanges {
     }
   }
 
-  configureCharts() {
-
-
+  setBarChartColors() {
+    this.barChartColors = [];
+    var color = [];
+    for (var j = 0; j < this.dataset.data.length; j++) {
+      if (parseInt(this.dataset.data[j]) > this.alertThreshold) {
+        color.push('#E27373');
+      }
+      else {
+        color.push('#66a19c');
+      }
+    }
+    this.barChartColors.push({ backgroundColor: color })
   }
-
 
   getTimes(dateTime: any, i: number) {
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -178,37 +150,6 @@ export class BarChartComponent implements OnChanges {
     else {
       this.barChartLabels.push("");
     }
-  }
-
-  setBarChartColors() {
-    this.barChartColors = [];
-    var color = [];
-    // for(var i=0; i< this.dataset.data.length; i++){
-    for (var j = 0; j < this.dataset.data.length; j++) {
-      if (parseInt(this.dataset.data[j]) > this.alertThreshold) {
-        color.push('#E27373');
-      }
-      else {
-        color.push('#66a19c');
-      }
-    }
-    // }
-    this.barChartColors.push({ backgroundColor: color })
-  }
-
-  setBarChartColors2() {
-    this.barChartColors = [
-      {//green
-        // backgroundColor: '#fff',
-        borderColor: '#66A19C',
-        pointBackgroundColor: '#fff',
-        pointBorderColor: '#66A19C',
-        pointHoverBackgroundColor: '#fff',
-        color: '#fff'
-        // pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-      }
-    ];
-
   }
 
   convertUTCDateToLocalDate(date: string | number | Date) {

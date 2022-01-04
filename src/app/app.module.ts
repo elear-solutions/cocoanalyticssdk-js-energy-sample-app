@@ -16,6 +16,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BarChartComponent } from './components/bar-chart/bar-chart.component';
 import { ChartsModule } from 'ng2-charts';
+import { LineChartComponent } from './components/line-chart/line-chart.component';
+import { DoughnutChartComponent } from './components/doughnut-chart/doughnut-chart.component';
 
 
 @NgModule({
@@ -23,7 +25,9 @@ import { ChartsModule } from 'ng2-charts';
     AppComponent,
     TopNavComponent,
     DemoComponent,
-    BarChartComponent
+    BarChartComponent,
+    LineChartComponent,
+    DoughnutChartComponent
   ],
   imports: [
     BrowserModule,

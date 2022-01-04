@@ -4,14 +4,15 @@
 			<label class="title">{{ title }}</label>
 		</div>
 		<div class="card-text">
-			<div  *ngIf="ready === false" class="d-flex justify-content-center text-dark">
+			<div *ngIf="ready === false" class="d-flex justify-content-center text-dark">
 				<div class="spinner-border" role="status">
 					<span class="sr-only">Loading...</span>
 				</div>
 			</div>
-			<canvas *ngIf="ready && showChart" baseChart height="250" [data]="doughnutChartData" [labels]="doughnutChartLabels" [options]="chartOptions"
-			[colors]="barChartColors" [chartType]="chartType" [plugins]="doughnutChartPlugins">
-		</canvas>
+			<canvas *ngIf="ready && showChart" baseChart height="250" [data]="doughnutChartData"
+				[labels]="doughnutChartLabels" [options]="chartOptions" [colors]="barChartColors" [chartType]="chartType"
+				[plugins]="doughnutChartPlugins">
+			</canvas>
+		</div>
 	</div>
-</div>
 </div>

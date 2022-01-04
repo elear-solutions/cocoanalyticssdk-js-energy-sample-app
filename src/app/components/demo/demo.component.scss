@@ -234,3 +234,42 @@ min-height: calc(100vh - 90px);
   color: #454E57;
   font-weight: 500;
 }
+//linechart
+.btn-group > .btn, .btn-group-vertical > .btn {
+  height:44px !important;
+   text-align: left;
+   padding:12px;
+   text-transform: none;
+   color:#212121;
+   font-family: 'Quicksand', sans-serif;
+   font-size:16px;
+   font-weight: 500;
+   border : 1px solid #DFDFDF;
+}
+.custom-dropdown-menu{
+  margin-top: 25px;
+  box-shadow: 0 0 15px rgba(33,33,33,.05)!important;
+  border:none;
+}
+
+.dropdown-menu {
+ width:100%;
+  max-height:350px;
+ overflow-y: scroll;
+ margin-top:25px;
+ // box-shadow: 0px 2px 13px #212121 !important;
+ box-shadow: 0px 0px 15px rgba(33, 33, 33, 5%) !important;
+}
+// .sub-menu{
+//   left:-610px;
+//   top:-100%;
+// }
+.dropdown-item {
+ color:#212121 !important;
+font-family: 'Quicksand', sans-serif;
+font-size:14px;
+font-weight: 500;
+height: 54px;
+   line-height: 54px;
+}
+////////////////////////////////

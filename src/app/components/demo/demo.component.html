@@ -1,7 +1,7 @@
 <div class="smart-energy-main">
   <div *ngIf="this.errorMessage" class="message-div-error text-left flexbox mb-2">
     <div class="flexbox-title">
-      <img src="../../../assets/scalableVectorGraphics/exclamation.svg">
+      <img src="../../../assets/scalable-vector-graphics/exclamation.svg">
       {{errorMessage}}
     </div>
   </div>
@@ -13,7 +13,7 @@
             *ngIf="this.userDetails && this.userDetails['profileImageURL']" [src]="this.userDetails['profileImageURL']"
             height="54px" width="54px" style="margin-right:15px">
           <img *ngIf="!this.userDetails && !this.userDetails['profileImageURL']"
-            src="../../../assets/scalableVectorGraphics/default_image_upload.svg" height="54px" width="54px"
+            src="../../../assets/scalable-vector-graphics/default_image_upload.svg" height="54px" width="54px"
             style="margin-right:15px">
 
           <span style="font-weight:400">Welcome to </span>COCO Analytics</span>
@@ -22,7 +22,7 @@
     </div>
     <div class="filters d-flex">
       <div>
-        <div class="form-group">
+        <div class="form-group" style="display:grid">
           <label for="name" class="control-label">NETWORK NAME <span class="star">*</span></label>
           <input readonly matInput [value]="selectedNetwork.networkName" (click)="framenetwork.show()"
             class="custom-select-56 form-control"
@@ -30,7 +30,7 @@
             placeholder="Choose a Network">
           <div class="mt-1 error-message-div hidden">
             <p xngIf="!selectedNetwork.networkName && this.submitted == true" class="errorMessage">
-              <img class="img-add" src="../../../assets/scalableVectorGraphics/exclamation.svg"> This field is
+              <img class="img-add" src="../../../assets/scalable-vector-graphics/exclamation.svg"> This field is
               required.
             </p>
           </div>
@@ -39,12 +39,12 @@
       <div style="width:40%;margin-top:40px" class="text-right">
         <button style="margin-right:20px"
           [ngClass]="this.selectedFilter == 'Hourly' ? 'btn_zone_active' : 'btn_zone_inactive'"
-          xclick="getChartQuery('Hourly')" mdbWavesEffect> Hourly </button>
+          (click)="setTimeResolution('Hourly')" mdbWavesEffect> Hourly </button>
         <button style="margin-right:20px"
           [ngClass]="this.selectedFilter == 'Daily' ? 'btn_zone_active' : 'btn_zone_inactive'"
-          xclick="getChartQuery('Daily')" mdbWavesEffect> Daily </button>
+          (click)="setTimeResolution('Daily')" mdbWavesEffect> Daily </button>
         <button [ngClass]="this.selectedFilter == 'Monthly' ? 'btn_zone_active' : 'btn_zone_inactive'"
-          xclick="getChartQuery('Monthly')" mdbWavesEffect> Monthly </button>
+          (click)="setTimeResolution('Monthly')" mdbWavesEffect> Monthly </button>
       </div>
 
     </div>
@@ -55,15 +55,14 @@
           <div class="container-fluid p-0">
             <!-- /* 16:9 Aspect Ratio * -->
             <div class="w-100  d-flex" style="height:400px">
-              <div style="width:60%;height:100%" class="mr-3 bg-white">
-                <!-- <app-bar-chart chartType="bar" [query]="totalHomeConsumptionQuery" [timePeriod]="selectedFilter"
-                  title="Total Home Consumption">
-                </app-bar-chart> -->
+              <div *ngIf="this.analyticsData != null" style="width:60%;height:100%" class="mr-3 bg-white">
+                <app-bar-chart graphType="bar" [dataset]="this.analyticsData" [timeResolution]="this.resolution">
+                </app-bar-chart>
               </div>
               <div style="width:40%;height:100%" class="bg-white">
-                <!-- <app-doughnut-chart chartType="doughnut" [query]="energyConsumptionByZonesQuery"
-                  [timePeriod]="this.selectedFilter" title="Energy Consumed By Zones">
-                </app-doughnut-chart> -->
+                <app-doughnut-chart graphType="doughnut" [dataset]="this.doughnutAnalyticsData" [zones]="this.zones"
+                  [timeResolution]="this.resolution" title="Energy Consumed By Zones">
+                </app-doughnut-chart>
               </div>
             </div>
 
@@ -73,11 +72,66 @@
                   [query]="monthlyConsumptionComparisonQuery" [timePeriod]="selectedFilter"
                   title="Total Monthly Comparisons">
                 </app-line-chart> -->
+                <div style="height: 100%;padding:20px" class="bg-white">
+                  <div class="d-flex" style="justify-content:space-between">
+                    <label class="title">{{ title }}</label>
+                    <div>
+                      <div mdbDropdown class="btn-group xcol-4 mr-3" style="width:145px">
+                        <button style="height:44px;" id="custom-dropdown-toggle2" mdbDropdownToggle type="button" mdbBtn
+                          class="form-control" mdbWavesEffect>
+                          <span class="dropdown-btn-text"><img class="img-firmware mr-2" style="margin-top:-2px"
+                              src="../../../assets/scalable-vector-graphics/dot-green.svg">{{this.startMonth}}</span>
+                          <span xngIf="this.mode != 'edit'" class="dropdown-toggle" style="float:right">
+                          </span>
+                        </button>
+                        <div class="dropdown-menu custom-dropdown-menu">
+                          <a class="dropdown-item" (click)="selectStartDate(option)"
+                            *ngFor="let option of options">{{option.label}}</a>
+                        </div>
+                      </div>
+                      <div mdbDropdown class="btn-group" style="width:145px;">
+                        <button style="height:44px;" id="custom-dropdown-toggle2" mdbDropdownToggle type="button" mdbBtn
+                          class="form-control" mdbWavesEffect>
+                          <span class="dropdown-btn-text"><img class="img-firmware mr-2" style="margin-top:-2px"
+                              src="../../../assets/scalable-vector-graphics/dot-yellow.svg">{{this.endMonth}}</span>
+                          <span xngIf="this.mode != 'edit'" class="dropdown-toggle" style="float:right">
+                          </span>
+                        </button>
+                        <div class="dropdown-menu custom-dropdown-menu">
+                          <a class="dropdown-item" (click)="selectEndDate(option)"
+                            *ngFor="let option of options">{{option.label}}</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngIf="this.showLineChart">
+                    <app-line-chart graphType="line" [dataset]="lineAnalyticsData" timeResolution="Daily">
+                    </app-line-chart>
+                  </div>
+
+                </div>
               </div>
               <div style="width:40%;height:100%" class="bg-white">
                 <!-- <app-half-doughnut chartType="line" [query]="monthlyConsumptionComparisonQuery"
                   [timePeriod]="selectedFilter" title="Current Energy Consumed">
                 </app-half-doughnut> -->
+                <div class="chart" style="height:90%">
+                  <div>
+                    <label class="title">{{ title }}</label>
+                    <div class="card-text text-center">
+                      <div *ngIf="ready === false" class="d-flex justify-content-center text-dark">
+                        <div class="spinner-border" role="status">
+                          <span class="sr-only">Loading...</span>
+                        </div>
+                      </div>
+                      <img *ngIf="this.total != 0" class="ml-2"
+                        src="../../../assets/scalable-vector-graphics/half-graph.svg" width="60%"><br />
+                      <label class="total" style="margin-top:-50px">N/A</label><br />
+                      <label *ngIf="this.total != 0"
+                        style="font-size:26px; font-weight:500;color:#757575; margin-top:15px">Medium</label>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -123,9 +177,9 @@
         <mat-form-field appearance="outline" id="searchUser" style="background-color:#FAFAFA;border-radius:15px">
           <input style="border:none" matInput placeholder="Search Network Name..." aria-label="User"
             [formControl]="searchNetworkCtrl" class="example-left-align">
-          <span matPrefix><img class="pr-2" src="../../../assets/scalableVectorGraphics/search.svg">&nbsp;</span>
+          <span matPrefix><img class="pr-2" src="../../../assets/scalable-vector-graphics/search.svg">&nbsp;</span>
           <span matSuffix *ngIf="this.searchNetworkCtrl.value != undefined && searchNetworkCtrl.value.length > 0">
-            <img class="pr-2" src="../../../assets/scalableVectorGraphics/modal_close_icon.svg"
+            <img class="pr-2" src="../../../assets/scalable-vector-graphics/modal_close_icon.svg"
               (click)="resetNetworkSearch()" style="cursor:pointer">
           </span>
         </mat-form-field>

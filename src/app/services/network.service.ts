@@ -66,6 +66,32 @@ export class NetworkService {
       xhr.send();
     });
   }
+  public getResourcesByZone(networkId: any, zoneId: any): any {
+    this.spinnerService.setSpinner(true);
+    const url = this.baseURL + "/network-manager/networks/" + networkId + "/zones/" + zoneId + "/resources";
+    return Coco.api(
+      {
+        "url": url,
+        "method": "GET",
+        "headers": {
+          'Content-Type': 'application/json; charset=utf-8'
+        },
+        "responseType": "json"
+      }).then(
+        (data: any) => {
+          this.spinnerService.setSpinner(false);
+          return data;
+        },
+        (error: any) => {
+          this.spinnerService.setSpinner(false);
+          if (error.response) {
+            var err = error.response['error']['message'];
+            console.log('Error : Resource Zone List', err);
+          }
+          // this.errorHandler(error);
+          return error;
+        });
+  }
   public getZoneNetworkList(networkId: any): any {
     this.spinnerService.setSpinner(true);
     const url = this.baseURL + "/network-manager/networks/" + networkId + "/zones";

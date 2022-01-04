@@ -1,16 +1,16 @@
 <div fxFlex style="height: 100%;padding:20px" class="bg-white">
-  <label class="title">{{ title }}</label>
-  <div id="graph">
-    <div *ngIf="ready === false" class="d-flex justify-content-center text-dark">
+  <label class="title">Total Home Consumption</label>
+  <div id="graph" style="height:265px !important">
+    <!-- <div *ngIf="ready === false" class="d-flex justify-content-center text-dark">
       <div class="spinner-border" role="status">
         <span class="sr-only">Loading...</span>
       </div>
-    </div>
-    <!-- <canvas *ngIf="ready && showChart" style="height:265px" baseChart [datasets]="chartData" [labels]="chartLabels"
+    </div> -->
+    <!-- <canvas *ngIf="showChart" style="height:265px" baseChart [datasets]="chartData" [labels]="chartLabels"
       [options]="chartOptions" [colors]="barChartColors" chartType="bar">
     </canvas> -->
-    <canvas class="graph" baseChart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions"
-      [chartType]="barChartType" [colors]="barChartColors">
+    <canvas xngIf="ready && showChart" class="graph" baseChart [datasets]="barChartData" [labels]="barChartLabels"
+      [options]="barChartOptions" [chartType]="barChartType" [colors]="barChartColors">
     </canvas>
   </div>
 </div>

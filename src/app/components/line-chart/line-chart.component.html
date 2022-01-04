@@ -1,0 +1,9 @@
+<div id="graph">
+  <!-- <div xngIf="ready === false" class="d-flex justify-content-center text-dark">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div> -->
+  <canvas xngIf="ready && showChart" baseChart height="300" class="graph" baseChart [datasets]="barChartData"
+    [labels]="barChartLabels" [options]="barChartOptions" [chartType]="barChartType" [colors]="barChartColors"></canvas>
+</div>
