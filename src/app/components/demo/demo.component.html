@@ -140,14 +140,17 @@
           <mdb-tabset xngIf="this.selectedMainTab == 1" id="overallConsumed" #staticTabZones
             [buttonClass]="'classic-tabs'" [contentClass]="'card'" xgetActiveTab="onZoneClick($event)"
             class="classic-tabs">
-            <!-- <mdb-tab *ngFor="let zone of zones; let i=index;" tabOrder="1" [heading]="zone.zoneName"
+            <mdb-tab *ngFor="let zone of zones; let i=index;" xtabOrder="1" [heading]="zone.zoneName"
               (select)="onZoneClick(zone.zoneId,i)">
-              <div *ngIf="this.selectedZone == zone.zoneId">
-                <app-resource-in-zones-chart chartType="doughnut" [query]="zonesAndResourcesConsumedQuery"
-                  [timePeriod]="this.selectedFilter" title="">
-                </app-resource-in-zones-chart>
-              </div> 
-        </mdb-tab>-->
+              <div xngIf="this.selectedZone == zone.zoneId">
+                <app-resources-in-zones-chart graphType="doughnut" [dataset]="this.doughnutAnalyticsData"
+                  [resources]="this.zoneResources" [timeResolution]="this.resolution" [attributeInfo]="attributeInfo"
+                  [networkId]="this.selectedNetwork" [filters]="this.filters" [time]="this.time"
+                  [resolution]="this.resolution" [analyticsHandle]="this.analyticsHandle"
+                  [measure]="this.selectedMeasure" title="Resources In Zones">
+                </app-resources-in-zones-chart>
+              </div>
+            </mdb-tab>
           </mdb-tabset>
 
         </mdb-tab>

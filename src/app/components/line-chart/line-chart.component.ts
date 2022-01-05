@@ -102,38 +102,6 @@ export class LineChartComponent implements OnChanges {
     responsive: true,
     maintainAspectRatio: false,
     //  ...this.barChartOptions,
-    options: {
-      chartArea: {
-        backgroundColor: 'rgba(251, 85, 85, 0.4)'
-        // backgroundColor: 'rgba(0,0,0)'
-      },
-      scales: {
-        xAxes: [
-          {
-            stacked: true,
-            ticks: {
-              maxTicksLimit: 0,
-              maxRotation: 0,
-            },
-            gridLines: { display: false, color: "#FFFFFF" },
-          },
-
-        ],
-        yAxes: [{
-          stacked: true,
-          ticks: {
-            callback: function (label: { toString: () => string; }, index: any, labels: any) {
-              // return label.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + " kWh";
-              return label.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "";
-            },
-            gridLines: { display: false, color: "#FFFFFF" },
-          },
-        }]
-      },
-      legend: {
-        display: false
-      }
-    }
   };
 
   public barChartLabels: Label[] = [];
@@ -144,8 +112,44 @@ export class LineChartComponent implements OnChanges {
   alertThreshold = 3500;
 
   public barChartData: any[] = [
-    { data: [], label: '' },
-    { data: [], label: '' }
+    {
+      data: [], label: '', fill: false, backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)'
+      ],
+      borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+      ],
+      borderWidth: 1
+    },
+    {
+      data: [], label: '', fill: false, backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)'
+      ],
+      borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+      ],
+      borderWidth: 1
+    }
   ];
   // barChartData: ChartDataSets[] = [
   //   { data: [45, 37, 60, 70, 46, 33], label: 'Best Fruits' },
@@ -155,6 +159,7 @@ export class LineChartComponent implements OnChanges {
   constructor() { }
 
   ngOnChanges(): void {
+    // Chart.defaults.scale.gridLines.drawOnChartArea = false;
     this.barChartType = this.graphType;
     this.barChartLabels = [];
     this.barChartColors = [];
@@ -203,10 +208,52 @@ export class LineChartComponent implements OnChanges {
             }
           }
         }
-
-        this.showChart = true;
-        this.ready = true;
       }
+      this.barChartOptions = {
+        ...this.barChartOptions,
+        options: {
+          scales: {
+            gridLines: { display: false, color: "#333333" },
+            xAxes: [
+              {
+                // grid line settings
+                grid: {
+                  drawOnChartArea: false, // only want the grid lines for one axis to show up
+                },
+                // gridLineWidth: 1,
+                stacked: true,
+                ticks: {
+                  maxTicksLimit: 0,
+                  maxRotation: 0,
+                },
+              },
+
+            ],
+            yAxes: [{
+              gridLines: {
+                drawOnChartArea: false
+              },
+              stacked: true,
+              ticks: {
+                callback: function (label: { toString: () => string; }, index: any, labels: any) {
+                  // return label.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + " kWh";
+                  return label.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "";
+                },
+                // grid: {
+                //   display: false
+                // },
+                // gridLines: { display: false, color: "#333333" },
+              },
+            }]
+          },
+        },
+        legend: {
+          display: false
+        }
+      }
+
+      this.showChart = true;
+      this.ready = true;
       this.setBarChartColors2();
     }
   }

@@ -1,0 +1,145 @@
+<div class="w-100 d-flex" style="background-color:#fafafa;height:400px">
+  <div class="col-md-8 mr-2 bg-white" style="padding:30px;height:100%">
+    <div class="d-flex" style="justify-content:space-between">
+      <label class="title">Resources in Zones</label>
+    </div>
+    <div class="card-text" style="height:100%">
+      <!-- <div xngIf="ready === false" class="d-flex justify-content-center text-dark">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div> -->
+      <canvas xngIf="ready && showChart" baseChart height="50" xstyle="height:250px" [data]="doughnutChartData"
+        [labels]="barChartLabels" [options]="chartOptions" [colors]="doughnutChartColors" [chartType]="chartType"
+        [plugins]="doughnutChartPlugins">
+      </canvas>
+    </div>
+  </div>
+  <div class="col-md-4  bg-white" style="padding:30px">
+    <div>
+      <label class="title">Resource Leader Board</label>
+      <!-- <div *ngIf="ready === false" class="d-flex justify-content-center text-dark">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div> -->
+      <div xngIf="ready && showChart" class="card-text text-center">
+        <div style="border-bottom:2px dotted #8097B1; padding-top:20px">
+          <div class="d-flex" style="align-items: center;">
+            <div style="width:25%">
+              <span class="xcol-md-2 progress-name">Device 1</span>
+            </div>
+            <div style="width:50%;background-color:pink">
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" [style.width.%]="0" [attr.aria-valuenow]="0"
+                  [attr.aria-valuemin]="1" [attr.aria-valuemax]="10"></div>
+              </div>
+
+            </div>
+            <div style="width:25%">
+              <span class="progress-data">N/A kWh</span>
+            </div>
+          </div>
+          <br>
+        </div>
+        <!-- <div *ngFor="let t of chart2Array | slice:0:4; let i=index"
+          style="border-bottom:2px dotted #8097B1; padding-top:20px">
+          <div class="d-flex" style="align-items: center;">
+            <div style="width:25%">
+              <span class="xcol-md-2 progress-name">{{t.resourceEUI}}</span>
+            </div>
+            <div style="width:50%;background-color:pink">
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" [style.width.%]="t.completionPercent"
+                  [attr.aria-valuenow]="t.value" [attr.aria-valuemin]="this.min" [attr.aria-valuemax]="this.max"></div>
+              </div>
+  
+            </div>
+            <div style="width:25%">
+              <span class="progress-data">{{t.value | number}} kWh</span>
+            </div>
+          </div>
+          <br>
+        </div> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div style="margin-top:30px; background-color:#fafafa;padding:0px">
+  <div>
+    <div class="card-text">
+      <!-- <div *ngIf="ready === false" class="d-flex justify-content-center text-dark">
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div> -->
+      <div class="d-flex" xngIf="ready && showChart">
+        <div class="card-resource" *ngFor="let resource of resources; let i=index"
+          (click)="showIndividualResourceModal(resource)">
+          <div class="row1 d-flex" style="justify-content:space-between">
+            <div>
+              <img [src]="resource.resourceIcon" height="35px" width="35px">
+            </div>
+            <div>
+              <img src="../../../assets/scalable-vector-graphics/plug.svg">
+              <img class="ml-2" src="../../../assets/scalable-vector-graphics/signalStrength_icon_1.svg">
+            </div>
+          </div>
+          <div class="row2 mt-2">
+            <div class="d-flex" style="justify-content:space-between">
+              <div style="display:grid">
+                <span class="resource-name">{{resource.name}}</span>
+                <span class="resource-value">{{resource.value | number}}<span style="color:#212121; font-size:20px;">
+                    kWh</span></span>
+              </div>
+              <img class="ml-2" src="../../../assets/scalable-vector-graphics/graph.svg">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="rules_resourcesModal" mdbModal #rules_resourcesModal="mdbModal" class="modal fade " tabindex="-1"
+    role="dialog" aria-labelledby="myBasicModalLabel" aria-hidden="true" style="z-index:5">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close pull-right" aria-label="Close" (click)="rules_resourcesModal.hide()">
+            <img class="modal_close_icon modal_cross_img"
+              src="../../../assets/scalable-vector-graphics/modal_close_icon.svg" style="margin-top: -60px;
+					margin-left: -86px;">
+          </button>
+
+          <div class="title-div col-12 p-0">
+            <span class="cp title">
+              <span>{{selectedResourceName}}</span>
+              <div style="width:100%;margin-top:-43px;" class="text-right">
+                <button style="margin-right:20px"
+                  xngClass="this.selectedFilter == 'Hourly' ? 'btn_zone_active' : 'btn_zone_inactive'"
+                  xclick="getChartQuery('Hourly')" mdbWavesEffect> Hourly </button>
+                <button style="margin-right:20px"
+                  xngClass="this.selectedFilter == 'Daily' ? 'btn_zone_active' : 'btn_zone_inactive'"
+                  xclick="getChartQuery('Daily')" mdbWavesEffect> Daily </button>
+                <button xngClass="this.selectedFilter == 'Monthly' ? 'btn_zone_active' : 'btn_zone_inactive'"
+                  xclick="getChartQuery('Monthly')" mdbWavesEffect> Monthly </button>
+              </div>
+            </span>
+          </div>
+
+        </div>
+
+
+        <div class="modal-body">
+          <div xngIf="this.totalHomeConsumptionQuery && Object.keys(this.totalHomeConsumptionQuery).length != 0">
+            <!-- <app-resources-chart chartType="bar" [query]="individualResourceQuery" [timePeriod]="selectedFilter"
+              title="Energy Consumption">
+            </app-resources-chart> -->
+            <app-bar-chart graphType="bar" [dataset]="this.analyticsData" [timeResolution]="this.resolution">
+            </app-bar-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

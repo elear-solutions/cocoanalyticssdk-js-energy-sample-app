@@ -1,0 +1,26 @@
+<svg id="Signal_Strength__Weak" data-name="Signal Strength _Weak" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_2242" data-name="Rectangle 2242" width="16" height="16" fill="#66a19c" stroke="#707070" stroke-width="1"/>
+    </clipPath>
+  </defs>
+  <g id="Signal_Strength__Full" data-name="Signal Strength _Full" clip-path="url(#clip-path)">
+    <g id="wifi" transform="translate(1.01 2.615)">
+      <g id="Group_4726" data-name="Group 4726" transform="translate(5.691 9.127)">
+        <g id="Group_4725" data-name="Group 4725">
+          <circle id="Ellipse_703" data-name="Ellipse 703" cx="1.26" cy="1.26" r="1.26" fill="#757575"/>
+        </g>
+      </g>
+      <g id="Group_4728" data-name="Group 4728" transform="translate(0 0)" opacity="0.3">
+        <g id="Group_4727" data-name="Group 4727">
+          <path id="Path_11382" data-name="Path 11382" d="M15.326,6.37a9.514,9.514,0,0,0-6.768-2.9A9.513,9.513,0,0,0,1.79,6.37.764.764,0,0,0,2.874,7.446,8,8,0,0,1,8.558,5a8,8,0,0,1,5.683,2.448A.764.764,0,1,0,15.326,6.37Z" transform="translate(-1.568 -3.471)" fill="#757575"/>
+        </g>
+      </g>
+      <g id="Group_4730" data-name="Group 4730" transform="translate(2.982 4.467)" opacity="0.3">
+        <g id="Group_4729" data-name="Group 4729">
+          <path id="Path_11383" data-name="Path 11383" d="M10.964,7.58a5.512,5.512,0,0,0-3.718-1.6H7.19a5.512,5.512,0,0,0-3.718,1.6A.764.764,0,1,0,4.547,8.665,3.989,3.989,0,0,1,7.19,7.511h.056A3.989,3.989,0,0,1,9.889,8.665.764.764,0,0,0,10.964,7.58Z" transform="translate(-3.246 -5.983)" fill="#757575"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

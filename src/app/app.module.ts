@@ -18,6 +18,7 @@ import { BarChartComponent } from './components/bar-chart/bar-chart.component';
 import { ChartsModule } from 'ng2-charts';
 import { LineChartComponent } from './components/line-chart/line-chart.component';
 import { DoughnutChartComponent } from './components/doughnut-chart/doughnut-chart.component';
+import { ResourcesInZonesChartComponent } from './components/resources-in-zones-chart/resources-in-zones-chart.component';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { DoughnutChartComponent } from './components/doughnut-chart/doughnut-cha
     DemoComponent,
     BarChartComponent,
     LineChartComponent,
-    DoughnutChartComponent
+    DoughnutChartComponent,
+    ResourcesInZonesChartComponent
   ],
   imports: [
     BrowserModule,

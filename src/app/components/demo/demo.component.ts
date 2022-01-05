@@ -6,6 +6,7 @@ import { FormControl } from '@angular/forms';
 import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
 import * as moment from "moment";
 import { Label } from 'ng2-charts';
+import { COCOHomeIcons } from 'src/app/utils/coco_home_icons';
 declare var CocoAnalytics: any;
 declare var getMeasures: any;
 declare var Coco: any;
@@ -29,6 +30,7 @@ export class DemoComponent implements AfterViewInit {
   userDetails: any = {};
   networks: any[] = [];
   resources: any[] = [];
+  zoneResources: any[] = [];
   // selectedFilter: string = "";
   selectedNetwork: any = {
     networkId: "",
@@ -95,14 +97,6 @@ export class DemoComponent implements AfterViewInit {
     )
   }
 
-  // getNetworksList1() {
-  //   this.networkService.getNetworksList().then((res: any) => {
-  //     res.response.networks.map((network: any) => {
-  //       this.networks.push(network);
-  //     });
-  //   });
-  //   console.log(this.networks);
-  // }
 
   getNetworksList() {
     this.networkService.getNetworksList().then((res: any) => {
@@ -145,9 +139,7 @@ export class DemoComponent implements AfterViewInit {
           arr.push(0);
         }
         this.doughnutAnalyticsData.data = arr;
-        console.log(this.analyticsData);
         this.tempZones = data.response.zones;
-        console.log(this.zones);
         this.getResourcesByZone();
       }, (error: any) => {
         console.log('getZoneNetworkList : ', error);
@@ -172,6 +164,31 @@ export class DemoComponent implements AfterViewInit {
           console.log('getResourceZoneList : ', error);
           return error;
         });
+    }
+  }
+  async getResourcesByZoneId() {
+    this.networkService.getResourcesByZone(this.selectedNetwork.networkId, this.selectedZone).then(
+      (data: any) => {
+        this.zoneResources = data.response.resources;
+        for (var i = 0; i < this.zoneResources.length; i++) {
+          this.zoneResources[i].resourceIcon = COCOHomeIcons.getResourceIcon(this.zoneResources[i].metadataArr[0].metadata);
+          var x = {
+            resourceEui: this.zoneResources[i].resourceEui,
+            deviceNodeId: this.zoneResources[i].deviceNodeId,
+          };
+          this.runIndividualResource(x, i);
+        }
+
+        console.log(this.zoneResouces);
+      }, (error: any) => {
+        console.log('getResourceZoneList : ', error);
+        return error;
+      });
+  }
+  onZoneClick(zoneId: any, i: any) {
+    if (zoneId != undefined) {
+      this.selectedZone = zoneId;
+      this.getResourcesByZoneId();
     }
   }
 
@@ -248,12 +265,10 @@ export class DemoComponent implements AfterViewInit {
     };
 
     var filters = {};
-
     filters = {
       resources: this.resources,
       zoneId: ""
     };
-
     var time = {
       dateRange: [this.startDate, this.endDate],
       resolution: this.resolution
@@ -317,6 +332,64 @@ export class DemoComponent implements AfterViewInit {
     // else {
     this.spinnerService.setSpinner(false);
     // }
+  }
+  async runIndividualResource(resource: any, i: number) {
+    this.barChartData[0].data = [{}];
+    this.spinnerService.setSpinner(true);
+    this.submitted = true;
+    // var valid = this.validate();
+    // if (valid) {
+    var attributeInfo = {
+      capabilityId: capabilityEnergyMeter,
+      attributeId: attributeEnergyMeterConsumption
+    };
+
+    var filters = {};
+    filters = {
+      resources: [resource],
+      zoneId: this.selectedZone
+    };
+
+    var time = {
+      dateRange: [this.startDate, this.endDate],
+      resolution: this.resolution
+    };
+    await CocoAnalytics.fetchData(this.analyticsHandle, this.selectedNetwork.networkId, attributeInfo, filters, time, this.selectedMeasure).then((response: any) => {
+      this.analyticsData = response;
+      this.zoneResources[i].value = response.data[response.data.length - 1].value;
+      this.spinnerService.setSpinner(false);
+    }, (error: any) => {
+      this.spinnerService.setSpinner(false);
+      this.gotoTop();
+      this.errorMessage = error;
+      setTimeout(() => {
+        this.errorMessage = "";
+      }, 5000);
+    });
+
+    console.log("ANALYTICS HANDLE");
+    console.log(this.analyticsHandle);
+
+    console.log("NETWORK ID");
+    console.log(this.selectedNetwork.networkId);
+
+    console.log("ATTRIBUTE INFO");
+    console.log(attributeInfo);
+
+    console.log("FILTERS");
+    console.log(filters);
+
+    console.log("TIME");
+    console.log(time);
+
+    console.log("MEASURE");
+    // console.log(this.selectedMeasure);
+    // this.analyticsData = {};
+    // }
+    // else {
+    this.spinnerService.setSpinner(false);
+    // }
+
   }
   selectStartDate(option: any) {
     this.resolution = "Daily";
