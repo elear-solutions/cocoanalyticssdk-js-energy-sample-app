@@ -85,7 +85,7 @@ export class ResourcesInZonesChartComponent implements OnChanges {
       // this.barChartData[0].label=this.selectedResource.name;
       for (var i = 0; i < this.dataset.data.length; i++) {
         if (i < this.resources.length) {
-          // this.barChartLabels.push(this.resources[i].name + '   ' + 'N/A Kw');
+          // this.barChartLa  bels.push(this.resources[i].name + '   ' + 'N/A Kw');
           this.doughnutChartData.push(1);
         }
         // this.dataset.data[i].value
@@ -202,18 +202,18 @@ export class ResourcesInZonesChartComponent implements OnChanges {
     console.log(this.analyticsData);
     var date = new Date();
 
-    if (this.timeResolution == "Hourly") {
+    if (this.time.resolution == "Hourly") {
       this.endDate = date.toISOString().split('.')[0];
       this.startDate = this.getRelativeHours(24);
       this.runIndividualResource(this.selectedResource);
     }
-    else if (this.timeResolution == "Daily") {
+    else if (this.time.resolution == "Daily") {
       this.endDate = date.toISOString().split('.')[0];
       this.startDate = this.getRelativeDays(30);
       this.runIndividualResource(this.selectedResource);
     }
 
-    else if (this.timeResolution == "Monthly") {
+    else if (this.time.resolution == "Monthly") {
       this.endDate = date.toISOString().split('.')[0];
       this.startDate = this.getRelativeMonths(12);
       this.runIndividualResource(this.selectedResource);
@@ -259,6 +259,9 @@ export class ResourcesInZonesChartComponent implements OnChanges {
 
   async runIndividualResource(resource: any) {
     this.spinnerService.setSpinner(true);
+    if (this.startDate != '' && this.endDate != '') {
+      this.time.dateRange = [this.startDate, this.endDate];
+    }
     await CocoAnalytics.fetchData(this.analyticsHandle, this.networkId, this.attributeInfo, this.filters, this.time, this.measure).then((response: any) => {
       this.analyticsData = response;
       this.spinnerService.setSpinner(false);
