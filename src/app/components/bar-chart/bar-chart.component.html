@@ -1,16 +1,16 @@
-<div fxFlex style="height: 100%;padding:20px" class="bg-white">
-  <label class="title">Total Home Consumption</label>
+<div class="chart-container bg-white">
+  <label class="title">{{title}}</label>
   <div id="graph" style="height:265px !important">
-    <!-- <div *ngIf="ready === false" class="d-flex justify-content-center text-dark">
+    <div *ngIf="!showChart" class="d-flex justify-content-center text-dark">
       <div class="spinner-border" role="status">
         <span class="sr-only">Loading...</span>
       </div>
-    </div> -->
-    <!-- <canvas *ngIf="showChart" style="height:265px" baseChart [datasets]="chartData" [labels]="chartLabels"
-      [options]="chartOptions" [colors]="barChartColors" chartType="bar">
-    </canvas> -->
-    <canvas xngIf="ready && showChart" class="graph" baseChart [datasets]="barChartData" [labels]="barChartLabels"
-      [options]="barChartOptions" [chartType]="barChartType" [colors]="barChartColors">
+    </div>
+    <canvas *ngIf="showChart && dataset.data?.length != 0" xclass="graph" baseChart [datasets]="chartData"
+      [labels]="chartLabels" [options]="chartOptions" chartType="bar" [colors]="chartColors">
     </canvas>
+    <div *ngIf="showChart && dataset.data?.length == 0">
+      No data found for the selected network and time period.
+    </div>
   </div>
 </div>

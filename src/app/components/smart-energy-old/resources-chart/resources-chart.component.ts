@@ -4,8 +4,8 @@ import { Subject } from "rxjs";
 import * as moment from "moment";
 import { ComposerService } from "src/app/services/composer.service";
 import { environment } from '../../../../environments/environment';
-import { ActivatedRoute, Router,NavigationEnd } from '@angular/router';
-import { map, filter, distinctUntilChanged, pairwise,takeUntil } from 'rxjs/operators';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { map, filter, distinctUntilChanged, pairwise, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-resources-chart',
@@ -20,7 +20,7 @@ export class ResourcesChartComponent implements OnInit {
   @Input() title;
 
   public chartData;
-  public chartLabels:any=[];
+  public chartLabels: any = [];
   public chartOptions: any = {
     responsive: true,
     maintainAspectRatio: false
@@ -29,35 +29,35 @@ export class ResourcesChartComponent implements OnInit {
   private querySubject;
   ready = false;
   showChart = false;
-  data:any="";
+  data: any = "";
   public barChartColors: any[] = [];
   private dateFormatter = ({ x }) => moment(x).format("MMM DD");
   private numberFormatter = x => x.toLocaleString();
   private capitalize = ([first, ...rest]) =>
-  first.toUpperCase() + rest.join("").toLowerCase();
+    first.toUpperCase() + rest.join("").toLowerCase();
 
 
-  constructor(private cubejs: CubejsClient, private composerService: ComposerService, private router:Router) {
+  constructor(private cubejs: CubejsClient, private composerService: ComposerService, private router: Router) {
     this.querySubject = new Subject();
-     this.composerService.getIndividualResourceSubscriptionDetails().subscribe(data => {
+    this.composerService.getIndividualResourceSubscriptionDetails().subscribe(data => {
 
-     this.query=data.obj;
+      this.query = data.obj;
 
-    if(this.query != undefined){
-      this.ready = false;
-      this.showChart = false;
-    this.resultChanged = this.resultChanged.bind(this);
+      if (this.query != undefined) {
+        this.ready = false;
+        this.showChart = false;
+        this.resultChanged = this.resultChanged.bind(this);
 
-    this.cubejs
-    .watch(this.querySubject)
-    .subscribe(this.resultChanged, err => console.log("HTTP Error", err));
-    this.querySubject.next(this.query);
-     }
-     });
+        this.cubejs
+          .watch(this.querySubject)
+          .subscribe(this.resultChanged, err => console.log("HTTP Error", err));
+        this.querySubject.next(this.query);
+      }
+    });
 
   }
 
-  ngOnInit(){
+  ngOnInit() {
   }
 
 
@@ -68,38 +68,38 @@ export class ResourcesChartComponent implements OnInit {
     //     console.log(resultSet.seriesNames()[0]);
 
     this.commonSetup(resultSet);
-    if(this.chartType == "bar"){
+    if (this.chartType == "bar") {
       this.setTotalHomeConsumptionData();
     }
   }
   convertUTCDateToLocalDate(date) {
     var d = new Date(date);
     var time = d.getTime();
-    var offset = d.getTimezoneOffset()*60*1000;
-    var nd = time-offset;
+    var offset = d.getTimezoneOffset() * 60 * 1000;
+    var nd = time - offset;
 
-   var newDate = new Date(nd);
-   return newDate;
-}
+    var newDate = new Date(nd);
+    return newDate;
+  }
 
   commonSetup(resultSet) {
-    this.chartLabels=[];
-    resultSet.chartPivot().map(item=>{
-      var  d = this.convertUTCDateToLocalDate(item.x);
-      var hours = parseInt(d.getHours().toString()) < 10 ? "0"+d.getHours().toString() : d.getHours().toString();
-      var mins = parseInt(d.getMinutes().toString()) < 10 ? "0"+d.getMinutes().toString() : d.getMinutes().toString();
-      var time = (hours+":"+mins);
-      if(this.timePeriod == 'Hourly'){
-        this.convertMilitaryTimeToStandardTime(time).then(res=>{
+    this.chartLabels = [];
+    resultSet.chartPivot().map(item => {
+      var d = this.convertUTCDateToLocalDate(item.x);
+      var hours = parseInt(d.getHours().toString()) < 10 ? "0" + d.getHours().toString() : d.getHours().toString();
+      var mins = parseInt(d.getMinutes().toString()) < 10 ? "0" + d.getMinutes().toString() : d.getMinutes().toString();
+      var time = (hours + ":" + mins);
+      if (this.timePeriod == 'Hourly') {
+        this.convertMilitaryTimeToStandardTime(time).then(res => {
           this.chartLabels.push(res);
         });
       }
-      else if(this.timePeriod == "Daily"){
+      else if (this.timePeriod == "Daily") {
         var weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         this.chartLabels.push(months[d.getMonth()] + ' ' + d.getDate());
       }
-      else if(this.timePeriod == "Monthly"){
+      else if (this.timePeriod == "Monthly") {
         var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         this.chartLabels.push(months[d.getMonth()]);
       }
@@ -108,25 +108,25 @@ export class ResourcesChartComponent implements OnInit {
       data: resultSet.chartPivot().map((element) => parseFloat(element[key]).toFixed(2)),
       label: "Avg Energy Consumption"
     }));
-    var x =[];
-    this.barChartColors=[];
+    var x = [];
+    this.barChartColors = [];
 
-    for(var i=0; i< this.chartData.length; i++){
+    for (var i = 0; i < this.chartData.length; i++) {
 
-      for(var j=0; j< this.chartData[i].data.length; j++){
+      for (var j = 0; j < this.chartData[i].data.length; j++) {
 
-        if(parseInt(this.chartData[i].data[j]) > 10600){
+        if (parseInt(this.chartData[i].data[j]) > 10600) {
           x.push('#E27373');
         }
-        else{
+        else {
           x.push('#66a19c');
         }
       }
     }
-    this.barChartColors.push({backgroundColor:x})
+    this.barChartColors.push({ backgroundColor: x })
   }
 
-  setTotalHomeConsumptionData(){
+  setTotalHomeConsumptionData() {
     this.chartType = "bar";
     this.chartOptions = {
       ...this.chartOptions,
@@ -139,7 +139,7 @@ export class ResourcesChartComponent implements OnInit {
               maxRotation: 0,
 
             },
-            gridLines: {display: false},
+            gridLines: { display: false },
             barThickness: 8,  // number (pixels) or 'flex'
             // maxBarThickness: 8 // number (pixels)
           }
@@ -147,42 +147,42 @@ export class ResourcesChartComponent implements OnInit {
         yAxes: [{
           stacked: true,
           ticks: {
-            callback: function(label, index, labels) {
-              return label.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') +" kWh";
+            callback: function (label, index, labels) {
+              return label.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + " kWh";
             }
           },
         }]
       },
       legend: {
-        display:false
+        display: false
       }
     };
     this.ready = true;
     this.showChart = true;
   }
 
-  async convertMilitaryTimeToStandardTime(time){
+  async convertMilitaryTimeToStandardTime(time) {
     var splitTime = time.split(':');
     var _hrs = splitTime[0];
     var _mins = splitTime[1];
 
-    if(parseInt(_hrs) > 12){
+    if (parseInt(_hrs) > 12) {
       _hrs = (parseInt(_hrs) - 12).toString();
-      if(parseInt(_hrs) < 10){
+      if (parseInt(_hrs) < 10) {
         // _hrs=("0"+_hrs).toString();
       }
-      return _hrs+":"+_mins+" pm";
+      return _hrs + ":" + _mins + " pm";
     }
-    else if(parseInt(_hrs) < 12 && parseInt(_hrs) != 0){
-      if(parseInt(_hrs) < 10){
+    else if (parseInt(_hrs) < 12 && parseInt(_hrs) != 0) {
+      if (parseInt(_hrs) < 10) {
         // _hrs=("0"+_hrs).toString();
       }
-      return _hrs+":"+_mins+" am";
+      return _hrs + ":" + _mins + " am";
     }
-    else if(parseInt(_hrs) == 12){
+    else if (parseInt(_hrs) == 12) {
       return "12:00 pm";
     }
-    else if(parseInt(_hrs) == 0){
+    else if (parseInt(_hrs) == 0) {
 
       return "12:00 am";
     }

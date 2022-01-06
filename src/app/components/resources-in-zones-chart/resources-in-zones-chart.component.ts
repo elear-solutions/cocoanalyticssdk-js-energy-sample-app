@@ -16,21 +16,21 @@ declare var CocoAnalytics: any;
 export class ResourcesInZonesChartComponent implements OnChanges {
   @ViewChild('rules_resourcesModal') rules_resourcesModal: ModalDirective | undefined;
   @Input()
+  timeResolution!: string;
+  @Input()
+  selectedZone: any;
+  @Input()
   attributeInfo: any = {};
   @Input()
   filters: any = {};
   @Input()
   time: any = {};
   @Input()
-  resolution: any;
-  @Input()
   networkId: any;
   @Input()
   analyticsHandle: any;
   @Input()
   measure: any;
-  @Input()
-  timeResolution!: string;
   @Input()
   resources: any[] = [{}];
   @Input()
@@ -40,6 +40,7 @@ export class ResourcesInZonesChartComponent implements OnChanges {
   showChart: boolean = false;
   title = "";
   ready: boolean = false;
+  showIndividualResource: boolean = false;
   public chartOptions: any = {
     responsive: true,
     maintainAspectRatio: false,
@@ -57,10 +58,13 @@ export class ResourcesInZonesChartComponent implements OnChanges {
 
   public doughnutChartData: SingleDataSet = [];
   alertThreshold = 3500;
-  selectedResource: any;
+  selectedResource: any = {};
   selectedResourceName: any;
   analyticsData: any;
   errorMessage: any;
+  selectedResourceId: any;
+  endDate: string = "";
+  startDate: string = "";
   constructor(public spinnerService: SpinnerService) { }
 
   ngOnChanges(): void {
@@ -68,15 +72,10 @@ export class ResourcesInZonesChartComponent implements OnChanges {
     this.doughnutChartData = [];
     this.chartType = this.graphType;
 
-    for (var i = 0; i < this.resources?.length; i++) {
-      this.barChartLabels.push(this.resources[i].name + '   ' + 'N/A Kw')
-      this.doughnutChartData.push(0)
-    }
-    console.log(this.doughnutChartData);
-
-    console.log(this.barChartLabels);
-    // this.doughnutChartColors = [];
-
+    // for (var i = 0; i < this.resources?.length; i++) {
+    //   this.barChartLabels.push(this.resources[i].name + '   ' + 'N/A Kw')
+    //   this.doughnutChartData.push(0)
+    // }
 
     if (this.dataset && this.dataset.data) {
       // this.setBarChartColors();
@@ -85,19 +84,21 @@ export class ResourcesInZonesChartComponent implements OnChanges {
 
       // this.barChartData[0].label=this.selectedResource.name;
       for (var i = 0; i < this.dataset.data.length; i++) {
-        if (i < this.resources.length)
-          this.doughnutChartData.push(1
-            // this.dataset.data[i].value
-          );
+        if (i < this.resources.length) {
+          this.barChartLabels.push(this.resources[i].name + '   ' + 'N/A Kw');
+          this.doughnutChartData.push(1);
+        }
+        // this.dataset.data[i].value
 
-        if (this.timeResolution == "Hourly") {
+
+        if (this.time.resolution == "Hourly") {
           this.getTimes(this.dataset.data[i].time, i);
         }
 
-        else if (this.timeResolution == "Daily") {
+        else if (this.time.resolution == "Daily") {
           this.getDays(this.dataset.data[i].time, i);
         }
-        else if (this.timeResolution == "Monthly") {
+        else if (this.time.resolution == "Monthly") {
           this.getMonths(this.dataset.data[i].time, i);
         }
       }
@@ -193,37 +194,71 @@ export class ResourcesInZonesChartComponent implements OnChanges {
     }
   }];
 
+  setTimeResolution(resolution: string) {
+    this.time.resolution = resolution;
+    this.setDates();
+  }
+  setDates() {
+    console.log(this.analyticsData);
+    var date = new Date();
+
+    if (this.timeResolution == "Hourly") {
+      this.endDate = date.toISOString().split('.')[0];
+      this.startDate = this.getRelativeHours(24);
+      this.runIndividualResource(this.selectedResource);
+    }
+    else if (this.timeResolution == "Daily") {
+      this.endDate = date.toISOString().split('.')[0];
+      this.startDate = this.getRelativeDays(30);
+      this.runIndividualResource(this.selectedResource);
+    }
+
+    else if (this.timeResolution == "Monthly") {
+      this.endDate = date.toISOString().split('.')[0];
+      this.startDate = this.getRelativeMonths(12);
+      this.runIndividualResource(this.selectedResource);
+    }
+  }
+  getRelativeHours(hr: any) {
+    var date = new Date();
+    var relativeDateTime = moment(date).subtract('hours', hr); //to get the date object
+    return relativeDateTime.toISOString().split('.')[0]; //In UTC
+  }
+
+  getRelativeDays(day: any) {
+    var date = new Date();
+    var relativeDateTime = moment(date).subtract('day', day);//to get the date object
+    return relativeDateTime.toISOString().split('.')[0]; //In UTC
+  }
+
+  getRelativeMonths(month: any) {
+    var date = new Date();
+    var relativeDateTime = moment(date).subtract('month', month); //to get the date object
+    return relativeDateTime.toISOString().split('.')[0]; //In UTC
+
+  }
+
   showIndividualResourceModal(resource: any) {
-    this.selectedResource = resource.resourceEUIId;
-    this.selectedResourceName = resource.resourceEUI;
-    var x = {
+    this.showIndividualResource = false;
+    this.selectedResourceId = resource.resourceEUIId;
+    this.selectedResourceName = resource.name;
+
+    this.selectedResource = {
       resourceEui: resource.resourceEui,
       deviceNodeId: resource.deviceNodeId,
     };
-    this.runIndividualResource(x);
-    if (this.rules_resourcesModal)
+
+    this.showIndividualResource = true;
+    if (this.rules_resourcesModal) {
+      this.filters.zoneId = this.selectedZone;
       this.rules_resourcesModal.show();
+      this.runIndividualResource(this.selectedResource);
+    }
+
   }
 
   async runIndividualResource(resource: any) {
     this.spinnerService.setSpinner(true);
-    // var valid = this.validate();
-    // if (valid) {
-    // var attributeInfo = {
-    //   capabilityId: capabilityEnergyMeter,
-    //   attributeId: attributeEnergyMeterConsumption
-    // };
-
-    // var filters = {};
-    // filters = {
-    //   resources: [resource],
-    //   zoneId: this.selectedZone
-    // };
-
-    // var time = {
-    //   dateRange: [this.startDate, this.endDate],
-    //   resolution: this.resolution
-    // };
     await CocoAnalytics.fetchData(this.analyticsHandle, this.networkId, this.attributeInfo, this.filters, this.time, this.measure).then((response: any) => {
       this.analyticsData = response;
       this.spinnerService.setSpinner(false);
@@ -252,13 +287,8 @@ export class ResourcesInZonesChartComponent implements OnChanges {
     console.log(this.time);
 
     console.log("MEASURE");
-    // console.log(this.selectedMeasure);
-    // this.analyticsData = {};
-    // }
-    // else {
+    console.log(this.analyticsData);
     this.spinnerService.setSpinner(false);
-    // }
-
   }
 
   // setBarChartColors() {

@@ -1,18 +1,38 @@
 <div class="w-100 d-flex" style="background-color:#fafafa;height:400px">
   <div class="col-md-8 mr-2 bg-white" style="padding:30px;height:100%">
-    <div class="d-flex" style="justify-content:space-between">
+    <!-- <div class="d-flex" style="justify-content:space-between">
       <label class="title">Resources in Zones</label>
     </div>
     <div class="card-text" style="height:100%">
-      <!-- <div xngIf="ready === false" class="d-flex justify-content-center text-dark">
+       <div xngIf="ready === false" class="d-flex justify-content-center text-dark">
         <div class="spinner-border" role="status">
           <span class="sr-only">Loading...</span>
         </div>
-      </div> -->
+      </div>
       <canvas xngIf="ready && showChart" baseChart height="50" xstyle="height:250px" [data]="doughnutChartData"
         [labels]="barChartLabels" [options]="chartOptions" [colors]="doughnutChartColors" [chartType]="chartType"
         [plugins]="doughnutChartPlugins">
       </canvas>
+    </div>-->
+    <div fxFlex style="height: 100%;padding:20px" class="bg-white">
+      <label class="title">Energy Consumed By Zones</label>
+      <div id="graph" style="height:265px !important">
+        <!-- <div *ngIf="ready === false" class="d-flex justify-content-center text-dark">
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div> -->
+        <!-- <canvas xngIf="showChart" style="height:265px" baseChart [datasets]="chartData" [labels]="chartLabels"
+          [options]="chartOptions" [colors]="chartColors" chartType="bar">
+        </canvas> -->
+        <canvas *ngIf="showChart" baseChart height="50" xstyle="height:250px" [data]="doughnutChartData"
+          [labels]="barChartLabels" [options]="chartOptions" [colors]="doughnutChartColors" chartType="doughnut"
+          [plugins]="doughnutChartPlugins">
+        </canvas>
+        <div *ngIf="showChart && dataset.data?.length == 0">
+          No data found for the selected network and time period.
+        </div>
+      </div>
     </div>
   </div>
   <div class="col-md-4  bg-white" style="padding:30px">
@@ -117,13 +137,13 @@
               <span>{{selectedResourceName}}</span>
               <div style="width:100%;margin-top:-43px;" class="text-right">
                 <button style="margin-right:20px"
-                  xngClass="this.selectedFilter == 'Hourly' ? 'btn_zone_active' : 'btn_zone_inactive'"
-                  xclick="getChartQuery('Hourly')" mdbWavesEffect> Hourly </button>
+                  [ngClass]="this.time.resolution == 'Hourly' ? 'btn_zone_active' : 'btn_zone_inactive'"
+                  (click)="setTimeResolution('Hourly')" mdbWavesEffect> Hourly </button>
                 <button style="margin-right:20px"
-                  xngClass="this.selectedFilter == 'Daily' ? 'btn_zone_active' : 'btn_zone_inactive'"
-                  xclick="getChartQuery('Daily')" mdbWavesEffect> Daily </button>
-                <button xngClass="this.selectedFilter == 'Monthly' ? 'btn_zone_active' : 'btn_zone_inactive'"
-                  xclick="getChartQuery('Monthly')" mdbWavesEffect> Monthly </button>
+                  [ngClass]="this.time.resolution == 'Daily' ? 'btn_zone_active' : 'btn_zone_inactive'"
+                  (click)="setTimeResolution('Daily')" mdbWavesEffect> Daily </button>
+                <button [ngClass]="this.time.resolution == 'Monthly' ? 'btn_zone_active' : 'btn_zone_inactive'"
+                  (click)="setTimeResolution('Monthly')" mdbWavesEffect> Monthly </button>
               </div>
             </span>
           </div>
@@ -133,10 +153,7 @@
 
         <div class="modal-body">
           <div xngIf="this.totalHomeConsumptionQuery && Object.keys(this.totalHomeConsumptionQuery).length != 0">
-            <!-- <app-resources-chart chartType="bar" [query]="individualResourceQuery" [timePeriod]="selectedFilter"
-              title="Energy Consumption">
-            </app-resources-chart> -->
-            <app-bar-chart graphType="bar" [dataset]="this.analyticsData" [timeResolution]="this.resolution">
+            <app-bar-chart [dataset]="this.analyticsData" [timeResolution]="this.time.resolution">
             </app-bar-chart>
           </div>
         </div>

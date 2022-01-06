@@ -130,7 +130,7 @@
 
 				<div class="modal-body">
 					<div xngIf="this.totalHomeConsumptionQuery && Object.keys(this.totalHomeConsumptionQuery).length != 0">
-						<app-resources-chart chartType="bar" [query]="individualResourceQuery" [timePeriod]="selectedFilter"
+						<app-resources-chart [query]="individualResourceQuery" [timePeriod]="selectedFilter"
 							title="Energy Consumption">
 						</app-resources-chart>
 					</div>

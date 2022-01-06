@@ -13,95 +13,56 @@ export class LineChartComponent implements OnChanges {
   @Input()
   dataset: any = [];
   @Input()
-  graphType!: string;
+  title!: string;
+  @Input()
+  mode!: string;
+
   showChart: boolean = false;
-  title = "";
+
   ready: boolean = false;
-
-  // public barChartOptions: any = {
-  //   responsive: true,
-  //   maintainAspectRatio: false,
-  //   type: 'line',
-  //   // data: data,
-  //   options: {
-  //     chartArea: {
-  //       // backgroundColor: 'rgba(251, 85, 85, 0.4)'
-  //       backgroundColor: 'rgba(0,0,0)'
-  //     },
-  //     // responsive: true,
-  //     // maintainAspectRatio: false,
-  //     interaction: {
-  //       mode: 'index',
-  //       intersect: false,
-  //     },
-  //     stacked: false,
-  //     plugins: {
-  //       title: {
-  //         display: true,
-  //         text: 'Chart.js Line Chart - Multi Axis'
-  //       }
-  //     },
-  //     scales: {
-  //       xAxes: [
-  //         {
-  //           stacked: true,
-  //           ticks: {
-  //             maxTicksLimit: 0,
-  //             maxRotation: 0,
-  //           },
-  //           gridLines: { display: false, color: "#FFFFFF" },
-  //           barThickness: 8,  // number (pixels) or 'flex'
-  //         },
-
-  //       ],
-  //       yAxes: [{
-  //         stacked: true,
-  //         ticks: {
-  //           // callback: function (label, index) {
-  //           //   // Hide the label of every 2nd dataset
-  //           //   // return index % 2 === 0 ? this.getLabelForValue(label) : '';
-  //           //   // return index % 2 === 0 ? label.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '';
-
-  //           //   // return index % 2 === 0 ? 'aaa' : 'bbb';
-  //           // },
-
-  //           callback: function (label: { toString: () => string; }, index: any, labels: any) {
-  //             // return label.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + " kWh";
-  //             return label.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "";
-  //           }
-  //         },
-  //       }],
-  //       //   y: {
-  //       //     type: 'linear',
-  //       //     display: true,
-  //       //     position: 'left',
-  //       //     gridLines: { display: false, color: "#FFFFFF" },
-
-  //       //   },
-  //       //   y1: {
-  //       //     type: 'linear',
-  //       //     display: true,
-  //       //     position: 'right',
-  //       //     gridLines: { display: false, color: "#FFFFFF" },
-
-
-  //       //     // // grid line settings
-  //       //     // grid: {
-  //       //     //   drawOnChartArea: false, // only want the grid lines for one axis to show up
-  //       //     // },
-  //       //   },
-  //       // },
-  //       // legend: {
-  //       //   display: false
-  //       // }
-  //     }
-  //   }
-  // }
 
   public barChartOptions: any = {
     responsive: true,
     maintainAspectRatio: false,
-    //  ...this.barChartOptions,
+    options: {
+      scales: {
+        gridLines: { display: false, color: "#333333" },
+        xAxes: [
+          {
+            // grid line settings
+            grid: {
+              drawOnChartArea: false, // only want the grid lines for one axis to show up
+            },
+            // gridLineWidth: 1,
+            stacked: true,
+            ticks: {
+              maxTicksLimit: 0,
+              maxRotation: 0,
+            },
+          },
+
+        ],
+        yAxes: [{
+          gridLines: {
+            drawOnChartArea: false
+          },
+          stacked: true,
+          ticks: {
+            callback: function (label: { toString: () => string; }, index: any, labels: any) {
+              // return label.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + " kWh";
+              return label.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "";
+            },
+            // grid: {
+            //   display: false
+            // },
+            // gridLines: { display: false, color: "#333333" },
+          },
+        }]
+      },
+    },
+    legend: {
+      display: false
+    }
   };
 
   public barChartLabels: Label[] = [];
@@ -159,10 +120,48 @@ export class LineChartComponent implements OnChanges {
   constructor() { }
 
   ngOnChanges(): void {
-    // Chart.defaults.scale.gridLines.drawOnChartArea = false;
-    this.barChartType = this.graphType;
     this.barChartLabels = [];
     this.barChartColors = [];
+    this.barChartData = [
+      {
+        data: [], label: '', fill: false, backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1
+      },
+
+      {
+        data: [], label: '', fill: false, backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1
+      }];
     var k = 1;
 
     if (this.dataset) {
@@ -171,10 +170,8 @@ export class LineChartComponent implements OnChanges {
         k++;
       }
 
-
       for (var i = 0; i < this.dataset.length; i++) {
-        // this.barChartData[0].label=this.selectedResource.name;
-        for (var j = 0; j < this.dataset[i].data.length; j++) {
+        for (var j = 0; j < this.dataset[i].data?.length; j++) {
           if (i == 0) {
             this.barChartData[i].data.push(
               this.dataset[i].data[j].value
@@ -209,52 +206,10 @@ export class LineChartComponent implements OnChanges {
           }
         }
       }
-      this.barChartOptions = {
-        ...this.barChartOptions,
-        options: {
-          scales: {
-            gridLines: { display: false, color: "#333333" },
-            xAxes: [
-              {
-                // grid line settings
-                grid: {
-                  drawOnChartArea: false, // only want the grid lines for one axis to show up
-                },
-                // gridLineWidth: 1,
-                stacked: true,
-                ticks: {
-                  maxTicksLimit: 0,
-                  maxRotation: 0,
-                },
-              },
-
-            ],
-            yAxes: [{
-              gridLines: {
-                drawOnChartArea: false
-              },
-              stacked: true,
-              ticks: {
-                callback: function (label: { toString: () => string; }, index: any, labels: any) {
-                  // return label.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + " kWh";
-                  return label.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "";
-                },
-                // grid: {
-                //   display: false
-                // },
-                // gridLines: { display: false, color: "#333333" },
-              },
-            }]
-          },
-        },
-        legend: {
-          display: false
-        }
-      }
-
-      this.showChart = true;
-      this.ready = true;
       this.setBarChartColors2();
+      if (this.mode == "end") {
+        this.showChart = true;
+      }
     }
   }
 
@@ -283,12 +238,12 @@ export class LineChartComponent implements OnChanges {
     // this.barChartLabels.push(months[d.getMonth()] + ' ' + d.getDate().toString());
     // this.barChartLabels.push(months[d.getMonth()] + ' ' + d.getDate().toString());
 
-    // if (i % 2 === 0) {
-    //   this.barChartLabels.push(months[d.getMonth()] + ' ' + d.getDate().toString());
-    // }
-    // else {
-    //   this.barChartLabels.push("");
-    // }
+    if (i % 2 === 0) {
+      this.barChartLabels.push(months[d.getMonth()] + ' ' + d.getDate().toString());
+    }
+    else {
+      this.barChartLabels.push("");
+    }
   }
 
   getMonths(dateTime: any, i: number) {

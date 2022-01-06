@@ -38,12 +38,12 @@
       </div>
       <div style="width:40%;margin-top:40px" class="text-right">
         <button style="margin-right:20px"
-          [ngClass]="this.selectedFilter == 'Hourly' ? 'btn_zone_active' : 'btn_zone_inactive'"
+          [ngClass]="this.resolution == 'Hourly' ? 'btn_zone_active' : 'btn_zone_inactive'"
           (click)="setTimeResolution('Hourly')" mdbWavesEffect> Hourly </button>
         <button style="margin-right:20px"
-          [ngClass]="this.selectedFilter == 'Daily' ? 'btn_zone_active' : 'btn_zone_inactive'"
+          [ngClass]="this.resolution == 'Daily' ? 'btn_zone_active' : 'btn_zone_inactive'"
           (click)="setTimeResolution('Daily')" mdbWavesEffect> Daily </button>
-        <button [ngClass]="this.selectedFilter == 'Monthly' ? 'btn_zone_active' : 'btn_zone_inactive'"
+        <button [ngClass]="this.resolution == 'Monthly' ? 'btn_zone_active' : 'btn_zone_inactive'"
           (click)="setTimeResolution('Monthly')" mdbWavesEffect> Monthly </button>
       </div>
 
@@ -55,32 +55,42 @@
           <div class="container-fluid p-0">
             <!-- /* 16:9 Aspect Ratio * -->
             <div class="w-100  d-flex" style="height:400px">
-              <div *ngIf="this.analyticsData != null" style="width:60%;height:100%" class="mr-3 bg-white">
-                <app-bar-chart graphType="bar" [dataset]="this.analyticsData" [timeResolution]="this.resolution">
+              <div style="width:60%;height:100%" class="mr-3 bg-white">
+                <app-bar-chart *ngIf="showTotalHomeConsumption" [dataset]="this.analyticsData"
+                  [timeResolution]="this.resolution" title="Total Home Consumption">
                 </app-bar-chart>
+                <div *ngIf="!showTotalHomeConsumption" class="analytics">
+                  <div class="analytics-content">
+                    <img src="../../../assets/scalable-vector-graphics/analytics-icon.svg">
+                    <h5 class="run">Please choose a network and time resolution</h5>
+                  </div>
+                </div>
               </div>
               <div style="width:40%;height:100%" class="bg-white">
-                <app-doughnut-chart graphType="doughnut" [dataset]="this.doughnutAnalyticsData" [zones]="this.zones"
-                  [timeResolution]="this.resolution" title="Energy Consumed By Zones">
+                <app-doughnut-chart *ngIf="showEnergyConsumedByZones" [dataset]="this.doughnutAnalyticsData"
+                  [zones]="this.zones" [timeResolution]="this.resolution" title="Energy Consumed By Zones">
                 </app-doughnut-chart>
+                <div *ngIf="!showEnergyConsumedByZones" class="analytics">
+                  <div class="analytics-content">
+                    <img src="../../../assets/scalable-vector-graphics/analytics-icon.svg">
+                    <h5 class="run">Please choose a network and time resolution</h5>
+                  </div>
+                </div>
               </div>
             </div>
 
             <div class="w-100  d-flex mt-3" style="height:400px">
               <div style="width:60%;height:100%" class="mr-3 bg-white">
-                <!-- <app-line-chart (compareDateRange)="setCompareDateRange($event)" chartType="line"
-                  [query]="monthlyConsumptionComparisonQuery" [timePeriod]="selectedFilter"
-                  title="Total Monthly Comparisons">
-                </app-line-chart> -->
-                <div style="height: 100%;padding:20px" class="bg-white">
+                <div *ngIf="this.showMonthlyComparisons" style="height: 100%;padding:20px" class="bg-white">
                   <div class="d-flex" style="justify-content:space-between">
-                    <label class="title">{{ title }}</label>
-                    <div>
-                      <div mdbDropdown class="btn-group xcol-4 mr-3" style="width:145px">
+                    <label class="title">Total Monthly Comparisons</label>
+                    <div *ngIf="this.showMonthlyComparisons">
+                      <div mdbDropdown class=" btn-group xcol-4 mr-3" style="width:145px">
                         <button style="height:44px;" id="custom-dropdown-toggle2" mdbDropdownToggle type="button" mdbBtn
                           class="form-control" mdbWavesEffect>
                           <span class="dropdown-btn-text"><img class="img-firmware mr-2" style="margin-top:-2px"
-                              src="../../../assets/scalable-vector-graphics/dot-green.svg">{{this.startMonth}}</span>
+                              src="../../../assets/scalable-vector-graphics/dot-green.svg">{{this.startMonth ?
+                            this.startMonth : 'Start Date'}}</span>
                           <span xngIf="this.mode != 'edit'" class="dropdown-toggle" style="float:right">
                           </span>
                         </button>
@@ -93,7 +103,8 @@
                         <button style="height:44px;" id="custom-dropdown-toggle2" mdbDropdownToggle type="button" mdbBtn
                           class="form-control" mdbWavesEffect>
                           <span class="dropdown-btn-text"><img class="img-firmware mr-2" style="margin-top:-2px"
-                              src="../../../assets/scalable-vector-graphics/dot-yellow.svg">{{this.endMonth}}</span>
+                              src="../../../assets/scalable-vector-graphics/dot-yellow.svg">{{this.endMonth ?
+                            this.endMonth : 'End Month'}}</span>
                           <span xngIf="this.mode != 'edit'" class="dropdown-toggle" style="float:right">
                           </span>
                         </button>
@@ -104,18 +115,25 @@
                       </div>
                     </div>
                   </div>
-                  <div *ngIf="this.showLineChart">
-                    <app-line-chart graphType="line" [dataset]="lineAnalyticsData" timeResolution="Daily">
+                  <div>
+                    <app-line-chart chartType="line" [dataset]="lineAnalyticsData" timeResolution="Daily"
+                      [mode]="lineDate" title="Total Monthly Comparisons">
                     </app-line-chart>
                   </div>
 
+                </div>
+                <div *ngIf="!this.showMonthlyComparisons" class="analytics">
+                  <div class="analytics-content">
+                    <img src="../../../assets/scalable-vector-graphics/analytics-icon.svg">
+                    <h5 class="run">Please choose a network</h5>
+                  </div>
                 </div>
               </div>
               <div style="width:40%;height:100%" class="bg-white">
                 <!-- <app-half-doughnut chartType="line" [query]="monthlyConsumptionComparisonQuery"
                   [timePeriod]="selectedFilter" title="Current Energy Consumed">
                 </app-half-doughnut> -->
-                <div class="chart" style="height:90%">
+                <div class="chart" style="height:90%" *ngIf="this.showCurrentEnergyConsumed">
                   <div>
                     <label class="title">{{ title }}</label>
                     <div class="card-text text-center">
@@ -132,29 +150,35 @@
                     </div>
                   </div>
                 </div>
+                <div *ngIf="!this.showCurrentEnergyConsumed" class="analytics">
+                  <div class="analytics-content">
+                    <img src="../../../assets/scalable-vector-graphics/analytics-icon.svg">
+                    <h5 class="run">Please choose a network</h5>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </mdb-tab>
         <mdb-tab xtabOrder=2 heading="Zone & Resource Consumed">
-          <mdb-tabset xngIf="this.selectedMainTab == 1" id="overallConsumed" #staticTabZones
-            [buttonClass]="'classic-tabs'" [contentClass]="'card'" xgetActiveTab="onZoneClick($event)"
-            class="classic-tabs">
+          <mdb-tabset *ngIf="this.selectedNetwork.networkId && this.time.resolution" xngIf="this.selectedMainTab == 1"
+            id="overallConsumed" #staticTabZones [buttonClass]="'classic-tabs'" [contentClass]="'card'"
+            xgetActiveTab="onZoneClick($event)" class="classic-tabs">
             <mdb-tab *ngFor="let zone of zones; let i=index;" xtabOrder="1" [heading]="zone.zoneName"
               (select)="onZoneClick(zone.zoneId,i)">
-              <div xngIf="this.selectedZone == zone.zoneId">
-                <app-resources-in-zones-chart graphType="doughnut" [dataset]="this.doughnutAnalyticsData"
-                  [resources]="this.zoneResources" [timeResolution]="this.resolution" [attributeInfo]="attributeInfo"
-                  [networkId]="this.selectedNetwork" [filters]="this.filters" [time]="this.time"
-                  [resolution]="this.resolution" [analyticsHandle]="this.analyticsHandle"
-                  [measure]="this.selectedMeasure" title="Resources In Zones">
+              <div *ngIf="this.analyticsHandle">
+                <app-resources-in-zones-chart chartType="doughnut" [dataset]="this.doughnutAnalyticsData"
+                  [resources]="this.zoneResources" [attributeInfo]="attributeInfo"
+                  [networkId]="this.selectedNetwork.networkId" [filters]="this.filters"
+                  [timeResolution]="this.resolution" [time]="this.time" [analyticsHandle]="this.analyticsHandle"
+                  [measure]="this.selectedMeasure" [selectedZone]="this.selectedZone" title="Resources In Zones">
                 </app-resources-in-zones-chart>
               </div>
             </mdb-tab>
           </mdb-tabset>
 
         </mdb-tab>
-        <mdb-tab xtabOrder=3 heading="Comparisons" xselect="setActiveTab(1)">
+        <mdb-tab xtabOrder=3 heading="Comparisons" xselect="setActiveTab(1)" [disabled]="true">
         </mdb-tab>
       </mdb-tabset>
     </div>

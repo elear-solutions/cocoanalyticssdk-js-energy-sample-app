@@ -234,6 +234,31 @@ min-height: calc(100vh - 90px);
   color: #454E57;
   font-weight: 500;
 }
+.analytics{
+  height:inherit;
+  // border: 1px solid #e1e1e1;
+  // border-radius: 5px;
+  // border-color: #E1E1E1;
+  // background: transparent;
+}
+
+.analytics-content{
+  height:inherit;
+  display: flex;
+  flex-direction: column;
+  padding-top: 130.37px;
+  padding-bottom: 171.37px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  background-color:white;
+}
+.run{
+  font-size: 24px;
+  color: #212121;
+  font-family: 'Quicksand', sans-serif;
+  margin-left:-93px;
+}
 //linechart
 .btn-group > .btn, .btn-group-vertical > .btn {
   height:44px !important;

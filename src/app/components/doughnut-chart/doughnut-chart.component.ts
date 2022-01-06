@@ -1,13 +1,6 @@
-import { Component, OnInit, Input, OnChanges } from "@angular/core";
-import { Subject } from "rxjs";
-import * as moment from "moment";
-// import { ComposerService } from "src/app/services/composer.service";
-// import { environment } from '../../../../environments/environment';
-import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { map, filter, distinctUntilChanged, pairwise, takeUntil } from 'rxjs/operators';
+import { Component, Input, OnChanges } from "@angular/core";
 import { MultiDataSet, Label, SingleDataSet, PluginServiceGlobalRegistrationAndOptions } from 'ng2-charts';
-
-
+import { Chart, ChartType } from 'chart.js';
 @Component({
   selector: 'app-doughnut-chart',
   templateUrl: './doughnut-chart.component.html',
@@ -17,61 +10,64 @@ export class DoughnutChartComponent implements OnChanges {
   @Input()
   timeResolution!: string;
   @Input()
-  zones: any[] = [{}];
-  @Input()
   dataset!: { data: string | any[]; };
   @Input()
-  graphType!: string;
+  chartType!: string;
+  @Input()
+  title!: string;
+  @Input()
+  zones: any[] = [{}];
+
   showChart: boolean = false;
-  title = "";
-  ready: boolean = false;
+  alertThreshold = 3500;
+
   public chartOptions: any = {
     responsive: true,
     maintainAspectRatio: false,
+    legend: {
+      position: "right",
+      display: true,
+      height: "50px",
+      labels: {
+        fontSize: 16,
+        padding: 23,
+        usePointStyle: true,
+        backgroundColor: ['#BD7BED', '#E27373', '#40D5D5', '#0097F9', '#EDAD2B', '#E58D23', '#14BC90']
+
+      }
+    },
+    cutoutPercentage: 80,
   };
 
-  public barChartLabels: Label[] = [];
-  public chartType!: any;
-  public barChartLegend = true;
-  public barChartPlugins: any[] = [];
-  public doughnutChartColors: any = [
+  public chartLabels: Label[] = [];
+  public chartPlugins: any[] = [];
+  public chartColors: any = [
     {
-      backgroundColor: ['#E27373', '#BD7BED', '#40D5D5', '#0097F9', '#EDAD2B', '#E58D23', '#14BC90',]
+      backgroundColor: ['#BD7BED', '#E27373', '#40D5D5', '#0097F9', '#EDAD2B', '#E58D23', '#14BC90']
     }
   ];
-  // public barChartData: any[] = [
-  //   { data: [], label: '' },
-  // ];
-  public doughnutChartData: SingleDataSet = [];
-  alertThreshold = 3500;
+  public chartData: SingleDataSet = [];
+
   constructor() { }
 
   ngOnChanges(): void {
-    this.barChartLabels = [];
-    this.doughnutChartData = [];
-    this.chartType = this.graphType;
+    this.chartLabels = [];
+    this.chartData = [];
 
     for (var i = 0; i < this.zones?.length; i++) {
-      this.barChartLabels.push(this.zones[i].zoneName + '   ' + 'N/A Kw')
-      this.doughnutChartData.push(0)
+      this.chartLabels.push(this.zones[i].zoneName + '   ' + 'N/A Kw');
+      // this.chartData.push(1);
     }
-    console.log(this.doughnutChartData);
-
-    console.log(this.barChartLabels);
-    // this.doughnutChartColors = [];
 
 
     if (this.dataset && this.dataset.data) {
-      // this.setBarChartColors();
-      console.log("in chart ");
-      console.log(this.dataset);
 
-      // this.barChartData[0].label=this.selectedResource.name;
       for (var i = 0; i < this.dataset.data.length; i++) {
-        if (i < this.zones.length)
-          this.doughnutChartData.push(1
-            // this.dataset.data[i].value
-          );
+        if (i < this.zones.length) {
+          // this.chartLabels.push(this.zones[i].zoneName + '   ' + 'N/A Kw')
+          this.chartData.push(1);
+        }
+        // this.dataset.data[i].value
 
         if (this.timeResolution == "Hourly") {
           this.getTimes(this.dataset.data[i].time, i);
@@ -84,24 +80,6 @@ export class DoughnutChartComponent implements OnChanges {
           this.getMonths(this.dataset.data[i].time, i);
         }
       }
-
-
-      this.chartOptions = {
-        ...this.chartOptions,
-        responsive: true,
-        maintainAspectRatio: false,
-        legend: {
-          position: "right",
-          display: true,
-          height: "50px",
-          labels: {
-            fontSize: 16,
-            padding: 23,
-            usePointStyle: true
-          }
-        },
-        cutoutPercentage: 80,
-      };
       this.showChart = true;
     }
   }
@@ -177,20 +155,6 @@ export class DoughnutChartComponent implements OnChanges {
     }
   }];
 
-  // setBarChartColors() {
-  //   this.barChartColors = [];
-  //   var color = [];
-  //   for (var j = 0; j < this.dataset.data.length; j++) {
-  //     if (parseInt(this.dataset.data[j]) > this.alertThreshold) {
-  //       color.push('#E27373');
-  //     }
-  //     else {
-  //       color.push('#66a19c');
-  //     }
-  //   }
-  //   this.barChartColors.push({ backgroundColor: color })
-  // }
-
   getTimes(dateTime: any, i: number) {
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     var d = this.convertUTCDateToLocalDate(dateTime);
@@ -201,10 +165,10 @@ export class DoughnutChartComponent implements OnChanges {
 
     this.convertMilitaryTimeToStandardTime(time).then((res: any) => {
       if (i % 2 === 0) {
-        // this.barChartLabels.push([res, d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear().toString()]);
+        // this.chartLabels.push([res, d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear().toString()]);
       }
       else {
-        // this.barChartLabels.push("");
+        // this.chartLabels.push("");
       }
     });
   }
@@ -214,10 +178,10 @@ export class DoughnutChartComponent implements OnChanges {
     var weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     if (i % 2 === 0) {
-      // this.barChartLabels.push(months[d.getMonth()] + ' ' + d.getDate().toString());
+      // this.chartLabels.push(months[d.getMonth()] + ' ' + d.getDate().toString());
     }
     else {
-      // this.barChartLabels.push("");
+      // this.chartLabels.push("");
     }
   }
 
@@ -225,10 +189,10 @@ export class DoughnutChartComponent implements OnChanges {
     var d = this.convertUTCDateToLocalDate(dateTime);
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     if (i % 2 === 0) {
-      // this.barChartLabels.push([months[d.getMonth()], d.getFullYear().toString()]);
+      // this.chartLabels.push([months[d.getMonth()], d.getFullYear().toString()]);
     }
     else {
-      // this.barChartLabels.push("");
+      // this.chartLabels.push("");
     }
   }
 

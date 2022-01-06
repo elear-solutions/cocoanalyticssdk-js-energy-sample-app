@@ -1,6 +1,6 @@
 import { Component, OnChanges, Input } from '@angular/core';
-import { ChartOptions, ChartType, ChartDataSets, Chart } from 'chart.js';
 import { Label } from 'ng2-charts';
+import { ChartType } from 'chart.js';
 @Component({
   selector: 'app-bar-chart',
   templateUrl: './bar-chart.component.html',
@@ -12,15 +12,15 @@ export class BarChartComponent implements OnChanges {
   @Input()
   dataset!: { data: string | any[]; };
   @Input()
-  graphType!: string;
-  showChart: boolean = false;
-  title = "";
-  ready: boolean = false;
+  title!: string;
 
-  public barChartOptions: any = {
+  showChart: boolean = false;
+  alertThreshold = 3500;
+
+  public chartOptions: any = {
     responsive: true,
     maintainAspectRatio: false,
-    //  ...this.barChartOptions,
+
     options: {
       chartArea: {
         backgroundColor: 'rgba(251, 85, 85, 0.4)'
@@ -54,31 +54,28 @@ export class BarChartComponent implements OnChanges {
       display: false
     }
   };
-  public barChartLabels: Label[] = [];
-  public barChartType!: any;
-  public barChartLegend = true;
-  public barChartPlugins: any[] = [];
-  public barChartColors: any[] = [];
-  public barChartData: any[] = [
+  public chartLabels: Label[] = [];
+  public chartLegend = true;
+  public chartPlugins: any[] = [];
+  public chartColors: any[] = [];
+  public chartData: any[] = [
     { data: [], label: '' },
   ];
-  alertThreshold = 3500;
+
   constructor() { }
 
   ngOnChanges(): void {
-    this.barChartType = this.graphType;
-    this.barChartLabels = [];
-    this.barChartColors = [];
-
+    this.chartLabels = [];
+    this.chartColors = [];
+    this.chartData = [
+      { data: [], label: '' },
+    ];
 
     if (this.dataset && this.dataset.data) {
-      this.setBarChartColors();
-      console.log("in chart ");
-      console.log(this.dataset);
+      this.setChartColors();
 
-      // this.barChartData[0].label=this.selectedResource.name;
       for (var i = 0; i < this.dataset.data.length; i++) {
-        this.barChartData[0].data.push(
+        this.chartData[0].data.push(
           this.dataset.data[i].value
         );
 
@@ -97,8 +94,8 @@ export class BarChartComponent implements OnChanges {
     }
   }
 
-  setBarChartColors() {
-    this.barChartColors = [];
+  setChartColors() {
+    this.chartColors = [];
     var color = [];
     for (var j = 0; j < this.dataset.data.length; j++) {
       if (parseInt(this.dataset.data[j]) > this.alertThreshold) {
@@ -108,7 +105,7 @@ export class BarChartComponent implements OnChanges {
         color.push('#66a19c');
       }
     }
-    this.barChartColors.push({ backgroundColor: color })
+    this.chartColors.push({ backgroundColor: color })
   }
 
   getTimes(dateTime: any, i: number) {
@@ -121,10 +118,10 @@ export class BarChartComponent implements OnChanges {
 
     this.convertMilitaryTimeToStandardTime(time).then((res: any) => {
       if (i % 2 === 0) {
-        this.barChartLabels.push([res, d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear().toString()]);
+        this.chartLabels.push([res, d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear().toString()]);
       }
       else {
-        this.barChartLabels.push("");
+        this.chartLabels.push("");
       }
     });
   }
@@ -134,10 +131,10 @@ export class BarChartComponent implements OnChanges {
     var weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     if (i % 2 === 0) {
-      this.barChartLabels.push(months[d.getMonth()] + ' ' + d.getDate().toString());
+      this.chartLabels.push(months[d.getMonth()] + ' ' + d.getDate().toString());
     }
     else {
-      this.barChartLabels.push("");
+      this.chartLabels.push("");
     }
   }
 
@@ -145,10 +142,10 @@ export class BarChartComponent implements OnChanges {
     var d = this.convertUTCDateToLocalDate(dateTime);
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     if (i % 2 === 0) {
-      this.barChartLabels.push([months[d.getMonth()], d.getFullYear().toString()]);
+      this.chartLabels.push([months[d.getMonth()], d.getFullYear().toString()]);
     }
     else {
-      this.barChartLabels.push("");
+      this.chartLabels.push("");
     }
   }
 

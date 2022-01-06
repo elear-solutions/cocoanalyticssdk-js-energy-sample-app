@@ -25,51 +25,46 @@ export class DemoComponent implements AfterViewInit {
   analyticsData: any = {};
   doughnutAnalyticsData: any = {};
   lineAnalyticsData: any = [];
-  tempLine: any = [];
+  tempLineStart: any = {};
+  tempLineEnd: any = {};
   analyticsHandle: any;
   userDetails: any = {};
+  resolution: any = "";
   networks: any[] = [];
   resources: any[] = [];
   zoneResources: any[] = [];
-  // selectedFilter: string = "";
   selectedNetwork: any = {
     networkId: "",
     networkName: ""
   };
   searchNetworkCtrl: FormControl = new FormControl();
-  showChart: boolean = false;
-  showLineChart: boolean = false;
+  showTotalHomeConsumption: boolean = false;
+  showEnergyConsumedByZones: boolean = false;
+  showMonthlyComparisons: boolean = false;
+  showCurrentEnergyConsumed: boolean = false;
   submitted: boolean = false;
+  attributeInfo: any = {};
+  filters: any = {};
+  time: any = {};
+  lineDate: any;
 
-  /*Bar Chart Configuration params*/
-  public barChartOptions: ChartOptions = {
-    responsive: true,
-  };
-  public barChartData: any[] = [{ data: [{}], label: '' },];
-  public barChartLabels: Label[] = [];
-  public barChartType: ChartType = 'bar';
-  public barChartLegend = true;
-  public barChartPlugins = [];
-  startDate: any = "2022-01-03"; //yy//mm/dd
-  endDate: any = "2022-01-03";
-
-  // startDate: any = "2022-01-01"; //yy//mm/dd
-  // endDate: any = "2022-01-31";
+  startDate: any = ""; //yy//mm/dd
+  endDate: any = "";
 
   options = [
-    { value: '3', label: 'Apr 2021', firstDay: '2021-04-01', lastDay: '2021-04-30' },
-    { value: '3', label: 'May 2021', firstDay: '2021-05-01', lastDay: '2021-05-31' },
-    { value: '3', label: 'Jun 2021', firstDay: '2021-06-01', lastDay: '2021-06-30' },
-    { value: '3', label: 'Jul 2021', firstDay: '2021-07-01', lastDay: '2021-07-31' },
-    { value: '3', label: 'Aug 2021', firstDay: '2021-08-01', lastDay: '2021-08-31' },
-    { value: '3', label: 'Sep 2021', firstDay: '2021-09-01', lastDay: '2021-09-30' },
-    { value: '3', label: 'Oct 2021', firstDay: '2021-10-01', lastDay: '2021-10-31' },
-    { value: '3', label: 'Nov 2021', firstDay: '2021-11-01', lastDay: '2021-11-30' },
-    { value: '3', label: 'Dec 2021', firstDay: '2021-12-01', lastDay: '2021-12-31' },
-    { value: '3', label: 'Jan 2022', firstDay: '2022-01-01', lastDay: '2022-01-31' },
-    { value: '3', label: 'Feb 2022', firstDay: '2022-02-01', lastDay: '2022-02-28' },
-    { value: '3', label: 'March 2022', firstDay: '2022-03-01', lastDay: '2022-03-31' },
-    { value: '3', label: 'April 2022', firstDay: '2022-04-01', lastDay: '2022-03-30' },
+    { label: 'Apr 2021', firstDay: '2021-04-01', lastDay: '2021-04-30' },
+    { label: 'May 2021', firstDay: '2021-05-01', lastDay: '2021-05-31' },
+    { label: 'Jun 2021', firstDay: '2021-06-01', lastDay: '2021-06-30' },
+    { label: 'Jul 2021', firstDay: '2021-07-01', lastDay: '2021-07-31' },
+    { label: 'Aug 2021', firstDay: '2021-08-01', lastDay: '2021-08-31' },
+    { label: 'Sep 2021', firstDay: '2021-09-01', lastDay: '2021-09-30' },
+    { label: 'Oct 2021', firstDay: '2021-10-01', lastDay: '2021-10-31' },
+    { label: 'Nov 2021', firstDay: '2021-11-01', lastDay: '2021-11-30' },
+    { label: 'Dec 2021', firstDay: '2021-12-01', lastDay: '2021-12-31' },
+    { label: 'Jan 2022', firstDay: '2022-01-01', lastDay: '2022-01-31' },
+    { label: 'Feb 2022', firstDay: '2022-02-01', lastDay: '2022-02-28' },
+    { label: 'March 2022', firstDay: '2022-03-01', lastDay: '2022-03-31' },
+    { label: 'April 2022', firstDay: '2022-04-01', lastDay: '2022-03-30' },
   ];
 
   constructor(public userService: UserService, public networkService: NetworkService, public spinnerService: SpinnerService) {
@@ -108,27 +103,20 @@ export class DemoComponent implements AfterViewInit {
     var old_val = this.selectedNetwork.networkId;
     if (old_val != network.networkId) {
       this.analyticsData = {};
-      // this.showChart = false;
-      // //Clear
-      // this.selectedZone = {
-      //   zoneName: ''
-      // }
-      // this.selectedResource = {
-      //   resourceName: ''
-      // }
-      // this.selectedCapability = {
-      //   capabilityName: ''
-      // }
-      // this.selectedAttribute = {
-      //   attributeName: ''
-      // }
-      // this.selectedMeasure = "";
-
       this.selectedNetwork.networkId = network.networkId;
       this.selectedNetwork.networkName = network.networkName;
       this.selectedNetwork.categoryName = network.categoryName;
+      this.showCurrentEnergyConsumed = true;
       this.getNetworkZones();
     }
+  }
+  setDefaultDates() {
+    this.selectStartDate(this.options[8]);
+    setTimeout(() => {
+      this.selectEndDate(this.options[9]);
+    }, 500);
+    this.showMonthlyComparisons = true;
+
   }
   getNetworkZones() {
     this.networkService.getZoneNetworkList(this.selectedNetwork.networkId).then(
@@ -155,16 +143,18 @@ export class DemoComponent implements AfterViewInit {
               resourceEui: data.response.resources[i].resourceEui,
               deviceNodeId: data.response.resources[i].deviceNodeId,
             })
-            // data.response.resources[i].resourceEui + '/' + data.response.resources[i].deviceNodeId);
           }
-          // this.resources = data.response.resources;
-          // this.tempResources = data.response.resources;
           console.log(this.resources);
+
         }, (error: any) => {
           console.log('getResourceZoneList : ', error);
           return error;
         });
     }
+    setTimeout(() => {
+      this.setDefaultDates();
+    }, 500);
+
   }
   async getResourcesByZoneId() {
     this.networkService.getResourcesByZone(this.selectedNetwork.networkId, this.selectedZone).then(
@@ -199,14 +189,14 @@ export class DemoComponent implements AfterViewInit {
     }
   }
   setTimeResolution(resolution: string) {
+    this.showTotalHomeConsumption = true;
+    this.showEnergyConsumedByZones = true;
     this.resolution = resolution;
     this.setDates();
   }
 
   setDates() {
-    console.log(this.analyticsData);
     var date = new Date();
-
     if (this.resolution == "Hourly") {
       this.endDate = date.toISOString().split('.')[0];
       this.startDate = this.getRelativeHours(24);
@@ -217,7 +207,6 @@ export class DemoComponent implements AfterViewInit {
       this.startDate = this.getRelativeDays(30);
       this.run();
     }
-
     else if (this.resolution == "Monthly") {
       this.endDate = date.toISOString().split('.')[0];
       this.startDate = this.getRelativeMonths(12);
@@ -254,54 +243,49 @@ export class DemoComponent implements AfterViewInit {
     else return true;
   }
   run(mode?: string, lineDate?: string) {
-    this.barChartData[0].data = [{}];
     this.spinnerService.setSpinner(true);
     this.submitted = true;
     // var valid = this.validate();
     // if (valid) {
-    var attributeInfo = {
+    this.attributeInfo = {
       capabilityId: capabilityEnergyMeter,
       attributeId: attributeEnergyMeterConsumption
     };
 
-    var filters = {};
-    filters = {
+    this.filters = {};
+    this.filters = {
       resources: this.resources,
       zoneId: ""
     };
-    var time = {
+
+    this.time = {
       dateRange: [this.startDate, this.endDate],
-      resolution: this.resolution
+      resolution: mode == 'line' ? 'Daily' : this.resolution
     };
-    CocoAnalytics.fetchData(this.analyticsHandle, this.selectedNetwork.networkId, attributeInfo, filters, time, this.selectedMeasure).then((response: any) => {
+    CocoAnalytics.fetchData(this.analyticsHandle, this.selectedNetwork.networkId, this.attributeInfo, this.filters, this.time, this.selectedMeasure).then((response: any) => {
+
       if (mode == 'line') {
+        this.lineDate = lineDate;
+
         if (lineDate == 'start') {
-          this.tempLine.push(response);
+          this.tempLineStart = response;
         }
         else {
-          this.tempLine.push(response);
-          this.lineAnalyticsData = this.tempLine
-          console.log("fetch line analytics");
-          console.log(this.lineAnalyticsData);
+          this.tempLineEnd = response;
         }
-        this.showLineChart = true;
+        if (this.isEmpty(this.tempLineStart) == false && this.isEmpty(this.tempLineEnd) == false) {
+          this.lineAnalyticsData = [];
+          this.lineAnalyticsData.push(this.tempLineStart);
+          this.lineAnalyticsData.push(this.tempLineEnd);
+        }
       }
       else {
         this.analyticsData = response;
-        console.log(this.analyticsData);
-      }
-      // this.analyticsData = response;
-      // this.showChart = this.isEmpty(this.analyticsData);
-      // this.barChartData[0].label = this.selectedResource.name;
-
-      for (var i = 0; i < response.data.length; i++) {
-        this.barChartData[0].data.push(
-          response.data[i].value
-        );
-        this.barChartLabels.push(response.data[i].time)
       }
       this.spinnerService.setSpinner(false);
     }, (error: any) => {
+      this.showTotalHomeConsumption = false;
+      this.showEnergyConsumedByZones = false;
       this.spinnerService.setSpinner(false);
       this.gotoTop();
       this.errorMessage = error;
@@ -317,28 +301,31 @@ export class DemoComponent implements AfterViewInit {
     console.log(this.selectedNetwork.networkId);
 
     console.log("ATTRIBUTE INFO");
-    console.log(attributeInfo);
+    console.log(this.attributeInfo);
 
     console.log("FILTERS");
-    console.log(filters);
+    console.log(this.filters);
 
     console.log("TIME");
-    console.log(time);
+    console.log(this.time);
 
     console.log("MEASURE");
-    // console.log(this.selectedMeasure);
     this.analyticsData = {};
-    // }
-    // else {
+
     this.spinnerService.setSpinner(false);
-    // }
+  }
+
+  isEmpty(obj: any) {
+    if (Object.keys(obj).length == 0) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
   async runIndividualResource(resource: any, i: number) {
-    this.barChartData[0].data = [{}];
     this.spinnerService.setSpinner(true);
     this.submitted = true;
-    // var valid = this.validate();
-    // if (valid) {
     var attributeInfo = {
       capabilityId: capabilityEnergyMeter,
       attributeId: attributeEnergyMeterConsumption
@@ -383,32 +370,15 @@ export class DemoComponent implements AfterViewInit {
     console.log(time);
 
     console.log("MEASURE");
-    // console.log(this.selectedMeasure);
-    // this.analyticsData = {};
-    // }
-    // else {
     this.spinnerService.setSpinner(false);
-    // }
-
   }
   selectStartDate(option: any) {
-    this.resolution = "Daily";
     var x = this.options.filter(e => e.firstDay == option.firstDay);
     this.startMonth = x[0].label;
     if (this.startMonth != '' && this.endMonth != '') {
-      //build compareDateRange
       this.startDate = x[0].firstDay;
       this.endDate = x[0].lastDay;
       this.run('line', 'start');
-
-      // this.startDate.push(x[0].firstDay);
-      // this.startDate.push(x[0].lastDay);
-      // console.log(this.startDate);
-
-      // var z = [];
-      // z.push(this.startDate);
-      // z.push(this.endDate);
-      // this.compareDateRange.emit(z);
     }
   }
 
@@ -416,18 +386,10 @@ export class DemoComponent implements AfterViewInit {
     var x = this.options.filter(e => e.firstDay == option.firstDay);
     this.endMonth = x[0].label;
     if (this.startMonth != '' && this.endMonth != '') {
-      // //build compareDateRange
-      // this.endDate = [];
-      // this.endDate.push(x[0].firstDay);
-      // this.endDate.push(x[0].lastDay);
-      // console.log(this.endDate);
-      // var z = [];
-      // z.push(this.startDate);
-      // z.push(this.endDate);
-      // this.compareDateRange.emit(z);
-
       this.startDate = x[0].firstDay;
       this.endDate = x[0].lastDay;
+      console.log(this.startDate);
+      console.log(this.endDate);
       this.run('line', 'end');
     }
   }
