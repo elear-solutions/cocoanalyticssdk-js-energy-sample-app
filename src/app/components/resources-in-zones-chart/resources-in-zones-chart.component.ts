@@ -72,10 +72,10 @@ export class ResourcesInZonesChartComponent implements OnChanges {
     this.doughnutChartData = [];
     this.chartType = this.graphType;
 
-    // for (var i = 0; i < this.resources?.length; i++) {
-    //   this.barChartLabels.push(this.resources[i].name + '   ' + 'N/A Kw')
-    //   this.doughnutChartData.push(0)
-    // }
+    for (var i = 0; i < this.resources?.length; i++) {
+      this.barChartLabels.push(this.resources[i].name + '   ' + 'N/A Kw')
+      // this.doughnutChartData.push(0)
+    }
 
     if (this.dataset && this.dataset.data) {
       // this.setBarChartColors();
@@ -85,7 +85,7 @@ export class ResourcesInZonesChartComponent implements OnChanges {
       // this.barChartData[0].label=this.selectedResource.name;
       for (var i = 0; i < this.dataset.data.length; i++) {
         if (i < this.resources.length) {
-          this.barChartLabels.push(this.resources[i].name + '   ' + 'N/A Kw');
+          // this.barChartLabels.push(this.resources[i].name + '   ' + 'N/A Kw');
           this.doughnutChartData.push(1);
         }
         // this.dataset.data[i].value
