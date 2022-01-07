@@ -1,6 +1,6 @@
 export const environment = {
-  production: true,
-  COCO_API_URL: 'https://api.getcoco.buzz',
-  REDIRECT_URL: 'https://manage.getcoco.buzz',
+  production: false,
+  COCO_API_URL: 'https://api.dev.getcoco.buzz',
+  REDIRECT_URL: 'http://localhost:4200',
   CLIENT_ID: 'b41c885303a25ba02afe',
 };
