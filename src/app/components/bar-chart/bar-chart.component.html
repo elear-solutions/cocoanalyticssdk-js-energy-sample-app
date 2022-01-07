@@ -1,13 +1,13 @@
 <div class="chart-container bg-white">
-  <label class="title">{{title}}</label>
-  <div id="graph" style="height:265px !important">
+  <label class="chart-title">{{title}}</label>
+  <div id="graph">
     <div *ngIf="!showChart" class="d-flex justify-content-center text-dark">
       <div class="spinner-border" role="status">
         <span class="sr-only">Loading...</span>
       </div>
     </div>
-    <canvas *ngIf="showChart && dataset.data?.length != 0" xclass="graph" baseChart [datasets]="chartData"
-      [labels]="chartLabels" [options]="chartOptions" chartType="bar" [colors]="chartColors">
+    <canvas *ngIf="showChart && dataset.data?.length != 0" baseChart [datasets]="chartData" [labels]="chartLabels"
+      [options]="chartOptions" chartType="bar" [colors]="chartColors">
     </canvas>
     <div *ngIf="showChart && dataset.data?.length == 0">
       No data found for the selected network and time period.

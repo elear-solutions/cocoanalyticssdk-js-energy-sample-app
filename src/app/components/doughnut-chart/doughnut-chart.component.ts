@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges } from "@angular/core";
-import { MultiDataSet, Label, SingleDataSet, PluginServiceGlobalRegistrationAndOptions } from 'ng2-charts';
-import { Chart, ChartType } from 'chart.js';
+import { Label, SingleDataSet, PluginServiceGlobalRegistrationAndOptions } from 'ng2-charts';
+import { Utils } from 'src/app/utils/utils';
+
 @Component({
   selector: 'app-doughnut-chart',
   templateUrl: './doughnut-chart.component.html',
@@ -16,7 +17,11 @@ export class DoughnutChartComponent implements OnChanges {
   @Input()
   title!: string;
   @Input()
+  mode!: string;
+  @Input()
   zones: any[] = [{}];
+  @Input()
+  resources: any[] = [{}];
 
   showChart: boolean = false;
   alertThreshold = 3500;
@@ -40,7 +45,7 @@ export class DoughnutChartComponent implements OnChanges {
   };
 
   public chartLabels: Label[] = [];
-  public chartPlugins: any[] = [];
+  // public chartPlugins: any[] = [];
   public chartColors: any = [
     {
       backgroundColor: ['#BD7BED', '#E27373', '#40D5D5', '#0097F9', '#EDAD2B', '#E58D23', '#14BC90']
@@ -54,37 +59,92 @@ export class DoughnutChartComponent implements OnChanges {
     this.chartLabels = [];
     this.chartData = [];
 
-    for (var i = 0; i < this.zones?.length; i++) {
-      this.chartLabels.push(this.zones[i].zoneName + '   ' + 'N/A Kw');
-      // this.chartData.push(1);
+    if (this.mode == "zones") {
+      this.getEnergyConsumedByZones();
     }
 
-
-    if (this.dataset && this.dataset.data) {
-
-      for (var i = 0; i < this.dataset.data.length; i++) {
-        if (i < this.zones.length) {
-          // this.chartLabels.push(this.zones[i].zoneName + '   ' + 'N/A Kw')
-          this.chartData.push(1);
-        }
-        // this.dataset.data[i].value
-
-        if (this.timeResolution == "Hourly") {
-          this.getTimes(this.dataset.data[i].time, i);
-        }
-
-        else if (this.timeResolution == "Daily") {
-          this.getDays(this.dataset.data[i].time, i);
-        }
-        else if (this.timeResolution == "Monthly") {
-          this.getMonths(this.dataset.data[i].time, i);
-        }
-      }
-      this.showChart = true;
+    else if (this.mode == "resources") {
+      this.getEnergyConsumedByResources();
     }
   }
 
-  public doughnutChartPlugins: PluginServiceGlobalRegistrationAndOptions[] = [{
+  getEnergyConsumedByZones() {
+
+    //To be removed in Phase 2
+    for (var i = 0; i < this.zones?.length; i++) {
+      this.chartLabels.push(this.zones[i].zoneName + '   ' + 'N/A Kw');
+      this.chartData.push(1);
+    }
+    this.showChart = true;
+
+    //Required for Phase 2
+    // if (this.dataset && this.dataset.data) {
+
+    //   for (var i = 0; i < this.dataset.data.length; i++) {
+    //     if (i < this.zones.length) {
+    //       // this.chartLabels.push(this.zones[i].zoneName + '   ' + 'N/A Kw')
+    //       this.chartData.push(1);
+    //     }
+    //     // this.dataset.data[i].value
+
+    //     if (this.timeResolution == "Hourly") {
+    //       this.getTimes(this.dataset.data[i].time, i);
+    //     }
+
+    //     else if (this.timeResolution == "Daily") {
+    //       this.getDays(this.dataset.data[i].time, i);
+    //     }
+    //     else if (this.timeResolution == "Monthly") {
+    //       this.getMonths(this.dataset.data[i].time, i);
+    //     }
+    //   }
+    //   this.showChart = true;
+    // }
+  }
+
+  //To be removed in Phase 2
+  getEnergyConsumedByResources() {
+    for (var i = 0; i < this.resources?.length; i++) {
+      this.chartLabels.push(this.resources[i].name + '   ' + 'N/A Kw')
+      this.chartData.push(1);
+    }
+
+    if (!this.resources) {
+      this.chartData.push(1);
+    }
+    this.showChart = true;
+
+    //Required for Phase 2
+    // if (this.dataset && this.dataset.data) {
+    //   // this.setBarChartColors();
+    //   console.log("in chart ");
+    //   console.log(this.dataset);
+
+    //   // this.barChartData[0].label=this.selectedResource.name;
+    //   for (var i = 0; i < this.dataset.data.length; i++) {
+    //     if (i < this.resources.length) {
+    //       // this.barChartLa  bels.push(this.resources[i].name + '   ' + 'N/A Kw');
+    //       this.chartData.push(1);
+    //     }
+    //     // this.dataset.data[i].value
+
+
+    //     if (this.timeResolution == "Hourly") {
+    //       this.getTimes(this.dataset.data[i].time, i);
+    //     }
+
+    //     else if (this.timeResolution == "Daily") {
+    //       this.getDays(this.dataset.data[i].time, i);
+    //     }
+    //     else if (this.timeResolution == "Monthly") {
+    //       this.getMonths(this.dataset.data[i].time, i);
+    //     }
+    //   }
+    //   this.showChart = true;
+    // }
+  }
+
+  public chartPlugins: PluginServiceGlobalRegistrationAndOptions[] = [{
     beforeDraw: (chart: any) => {
       var lineHeight = 25;
       const ctx = chart.ctx;
@@ -157,24 +217,23 @@ export class DoughnutChartComponent implements OnChanges {
 
   getTimes(dateTime: any, i: number) {
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    var d = this.convertUTCDateToLocalDate(dateTime);
+    var d = Utils.convertUTCDateToLocalDate(dateTime);
     var hours = parseInt(d.getHours().toString()) < 10 ? "0" + d.getHours().toString() : d.getHours().toString();
     var mins = parseInt(d.getMinutes().toString()) < 10 ? "0" + d.getMinutes().toString() : d.getMinutes().toString();
     var time = (hours + ":" + mins);
 
 
-    this.convertMilitaryTimeToStandardTime(time).then((res: any) => {
-      if (i % 2 === 0) {
-        // this.chartLabels.push([res, d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear().toString()]);
-      }
-      else {
-        // this.chartLabels.push("");
-      }
-    });
+    var res = Utils.convertMilitaryTimeToStandardTime(time);
+    if (i % 2 === 0) {
+      // this.chartLabels.push([res, d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear().toString()]);
+    }
+    else {
+      // this.chartLabels.push("");
+    }
   }
 
   getDays(dateTime: any, i: number) {
-    var d = this.convertUTCDateToLocalDate(dateTime);
+    var d = Utils.convertUTCDateToLocalDate(dateTime);
     var weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     if (i % 2 === 0) {
@@ -186,51 +245,13 @@ export class DoughnutChartComponent implements OnChanges {
   }
 
   getMonths(dateTime: any, i: number) {
-    var d = this.convertUTCDateToLocalDate(dateTime);
+    var d = Utils.convertUTCDateToLocalDate(dateTime);
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     if (i % 2 === 0) {
       // this.chartLabels.push([months[d.getMonth()], d.getFullYear().toString()]);
     }
     else {
       // this.chartLabels.push("");
-    }
-  }
-
-  convertUTCDateToLocalDate(date: string | number | Date) {
-    var d = new Date(date);
-    var time = d.getTime();
-    var offset = d.getTimezoneOffset() * 60 * 1000;
-    var nd = time - offset;
-    var newDate = new Date(nd);
-    return newDate;
-  }
-
-  async convertMilitaryTimeToStandardTime(time: string) {
-    var splitTime = time.split(':');
-    var _hrs = splitTime[0];
-    var _mins = splitTime[1];
-
-    if (parseInt(_hrs) > 12) {
-      _hrs = (parseInt(_hrs) - 12).toString();
-      if (parseInt(_hrs) < 10) {
-        // _hrs=("0"+_hrs).toString();
-      }
-      return _hrs + ":" + _mins + " pm";
-    }
-    else if (parseInt(_hrs) < 12 && parseInt(_hrs) != 0) {
-      if (parseInt(_hrs) < 10) {
-        // _hrs=("0"+_hrs).toString();
-      }
-      return _hrs + ":" + _mins + " am";
-    }
-    else if (parseInt(_hrs) == 12) {
-      return "12:00 pm";
-    }
-    else if (parseInt(_hrs) == 0) {
-      return "12:00 am";
-    }
-    else {
-      return "";
     }
   }
 }

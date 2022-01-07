@@ -1,39 +1,30 @@
 <div class="w-100 d-flex" style="background-color:#fafafa;height:400px">
   <div class="col-md-8 mr-2 bg-white" style="padding:30px;height:100%">
-    <!-- <div class="d-flex" style="justify-content:space-between">
-      <label class="title">Resources in Zones</label>
-    </div>
-    <div class="card-text" style="height:100%">
-       <div xngIf="ready === false" class="d-flex justify-content-center text-dark">
-        <div class="spinner-border" role="status">
-          <span class="sr-only">Loading...</span>
-        </div>
-      </div>
-      <canvas xngIf="ready && showChart" baseChart height="50" xstyle="height:250px" [data]="doughnutChartData"
-        [labels]="barChartLabels" [options]="chartOptions" [colors]="doughnutChartColors" [chartType]="chartType"
-        [plugins]="doughnutChartPlugins">
-      </canvas>
-    </div>-->
-    <div fxFlex style="height: 100%;padding:20px" class="bg-white">
-      <label class="title">Energy Consumed By Zones</label>
+    <!-- <div style="height: 100%;padding:20px" class="bg-white"> -->
+    <!-- <label class="title">Energy Consumed By Zones</label>
       <div id="graph" style="height:265px !important">
-        <!-- <div *ngIf="ready === false" class="d-flex justify-content-center text-dark">
+         <div *ngIf="ready === false" class="d-flex justify-content-center text-dark">
           <div class="spinner-border" role="status">
             <span class="sr-only">Loading...</span>
           </div>
-        </div> -->
-        <!-- <canvas xngIf="showChart" style="height:265px" baseChart [datasets]="chartData" [labels]="chartLabels"
-          [options]="chartOptions" [colors]="chartColors" chartType="bar">
-        </canvas> -->
-        <canvas *ngIf="showChart" baseChart height="50" xstyle="height:250px" [data]="doughnutChartData"
-          [labels]="barChartLabels" [options]="chartOptions" [colors]="doughnutChartColors" chartType="doughnut"
-          [plugins]="doughnutChartPlugins">
+        </div>
+        <canvas *ngIf="showChart" baseChart height="50" xstyle="height:250px" [data]="chartData" [labels]="chartLabel"
+          [options]="chartOptions" [colors]="chartColors" chartType="doughnut" [plugins]="chartPlugins">
         </canvas>
         <div *ngIf="showChart && dataset.data?.length == 0">
           No data found for the selected network and time period.
         </div>
       </div>
-    </div>
+    </div> -->
+    <app-doughnut-chart xngIf="showEnergyConsumedByResources" [dataset]="this.doughnutAnalyticsData"
+      [resources]="this.resources" [timeResolution]="this.timeResolution" mode="resources" title="Resources In Zones">
+    </app-doughnut-chart>
+    <!-- <div xngIf="!showEnergyConsumedByResources" class="analytics hidden">
+      <div class="analytics-content">
+        <img src="../../../assets/scalable-vector-graphics/analytics-icon.svg">
+        <h5 class="empty-state-sub-title">Please choose a network and time resolution</h5>
+      </div>
+    </div> -->
   </div>
   <div class="col-md-4  bg-white" style="padding:30px">
     <div>
@@ -131,15 +122,14 @@
               src="../../../assets/scalable-vector-graphics/modal_close_icon.svg" style="margin-top: -60px;
 					margin-left: -86px;">
           </button>
-
           <div class="title-div col-12 p-0">
             <span class="cp title">
               <span>{{selectedResourceName}}</span>
               <div style="width:100%;margin-top:-43px;" class="text-right">
-                <button style="margin-right:20px"
+                <button class="mr-4"
                   [ngClass]="this.time.resolution == 'Hourly' ? 'btn_zone_active' : 'btn_zone_inactive'"
                   (click)="setTimeResolution('Hourly')" mdbWavesEffect> Hourly </button>
-                <button style="margin-right:20px"
+                <button class="mr-4"
                   [ngClass]="this.time.resolution == 'Daily' ? 'btn_zone_active' : 'btn_zone_inactive'"
                   (click)="setTimeResolution('Daily')" mdbWavesEffect> Daily </button>
                 <button [ngClass]="this.time.resolution == 'Monthly' ? 'btn_zone_active' : 'btn_zone_inactive'"
@@ -147,10 +137,7 @@
               </div>
             </span>
           </div>
-
         </div>
-
-
         <div class="modal-body">
           <div xngIf="this.totalHomeConsumptionQuery && Object.keys(this.totalHomeConsumptionQuery).length != 0">
             <app-bar-chart [dataset]="this.analyticsData" [timeResolution]="this.time.resolution">

@@ -10,7 +10,7 @@ import {
 } from 'ng-uikit-pro-standard';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { DemoComponent } from './components/demo/demo.component';
+import { TotalHomeConsumptionComponent } from './components/total-home-consumption/total-home-consumption.component';
 declare var Coco: any;
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -19,17 +19,19 @@ import { ChartsModule } from 'ng2-charts';
 import { LineChartComponent } from './components/line-chart/line-chart.component';
 import { DoughnutChartComponent } from './components/doughnut-chart/doughnut-chart.component';
 import { ResourcesInZonesChartComponent } from './components/resources-in-zones-chart/resources-in-zones-chart.component';
+import { CurrentEnergyConsumedComponent } from './components/current-energy-consumed/current-energy-consumed.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     TopNavComponent,
-    DemoComponent,
+    TotalHomeConsumptionComponent,
     BarChartComponent,
     LineChartComponent,
     DoughnutChartComponent,
-    ResourcesInZonesChartComponent
+    ResourcesInZonesChartComponent,
+    CurrentEnergyConsumedComponent
   ],
   imports: [
     BrowserModule,

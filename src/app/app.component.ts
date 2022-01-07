@@ -1,34 +1,17 @@
-import { Component, OnInit, HostListener } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
 import { UserService } from './services/user.service';
 import { SpinnerService } from './services/spinner.service';
 import { User } from './models/user';
 import { Router, NavigationEnd, NavigationStart, Event } from '@angular/router';
 import { environment } from '../environments/environment';
 import { ConnectionService } from 'ng-connection-service';
-import { MAT_DATE_FORMATS } from '@angular/material/core';
 
 declare var Coco: any;
-
-// export const MY_DATE_FORMATS = {
-//   parse: {
-//     dateInput: 'DD/MM/YYYY',
-//   },
-//   display: {
-//     dateInput: 'DD-MMM-YYYY',
-//     monthYearLabel: 'MMMM YYYY',
-//     dateA11yLabel: 'LL',
-//     monthYearA11yLabel: 'MMMM YYYY'
-//   },
-// };
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  // providers: [
-  //   { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS }
-  // ]
 })
 export class AppComponent implements OnInit {
   title = 'COCO Analytics Sample App';
@@ -41,23 +24,6 @@ export class AppComponent implements OnInit {
   loader: any;
   isLoading: boolean = false;
   timeout: any;
-
-
-  // @HostListener('window:focus', ['$event'])
-  // onFocus(event: FocusEvent): void {
-  //   var _oldUser = this.userService.currentUserSubject.getValue();
-
-  //   if (localStorage.getItem('coco-user') != null) {
-  //     var _currentUser = JSON.parse(localStorage.getItem('coco-user') || '{}');
-  //     if (_oldUser["userId"] != _currentUser["userId"]) {
-  //       window.location.reload();
-  //     }
-  //   }
-  //   else {
-  //     Coco.login();
-  //     //Redirect to login page
-  //   }
-  // }
 
   constructor(private connectionService: ConnectionService, private userService: UserService, private router: Router, public spinnerService: SpinnerService) {
     document.addEventListener("visibilitychange", function () {

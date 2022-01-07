@@ -1,6 +1,6 @@
 import { Component, OnChanges, Input } from '@angular/core';
-import { ChartOptions, ChartType, ChartDataSets, Chart } from 'chart.js';
 import { Label } from 'ng2-charts';
+import { Utils } from 'src/app/utils/utils';
 
 @Component({
   selector: 'app-line-chart',
@@ -206,35 +206,32 @@ export class LineChartComponent implements OnChanges {
           }
         }
       }
-      this.setBarChartColors2();
-      if (this.mode == "end") {
-        this.showChart = true;
-      }
+      this.setChartColors();
     }
   }
 
   getTimes(dateTime: any, i: number) {
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    var d = this.convertUTCDateToLocalDate(dateTime);
+    var d = Utils.convertUTCDateToLocalDate(dateTime);
     var hours = parseInt(d.getHours().toString()) < 10 ? "0" + d.getHours().toString() : d.getHours().toString();
     var mins = parseInt(d.getMinutes().toString()) < 10 ? "0" + d.getMinutes().toString() : d.getMinutes().toString();
     var time = (hours + ":" + mins);
 
-    this.convertMilitaryTimeToStandardTime(time).then((res: any) => {
-      if (i % 2 === 0) {
-        this.barChartLabels.push([res, d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear().toString()]);
-      }
-      else {
-
-        this.barChartLabels.push("");
-      }
-    });
+    var res = Utils.convertMilitaryTimeToStandardTime(time);
+    if (i % 2 === 0) {
+      this.barChartLabels.push([res, d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear().toString()]);
+    }
+    else {
+      this.barChartLabels.push("");
+    }
   }
 
   getDays(dateTime: any, i: number) {
-    var d = this.convertUTCDateToLocalDate(dateTime);
+    var d = Utils.convertUTCDateToLocalDate(dateTime);
     var weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    //To Do
     // this.barChartLabels.push(months[d.getMonth()] + ' ' + d.getDate().toString());
     // this.barChartLabels.push(months[d.getMonth()] + ' ' + d.getDate().toString());
 
@@ -247,7 +244,7 @@ export class LineChartComponent implements OnChanges {
   }
 
   getMonths(dateTime: any, i: number) {
-    var d = this.convertUTCDateToLocalDate(dateTime);
+    var d = Utils.convertUTCDateToLocalDate(dateTime);
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     if (i % 2 === 0) {
       this.barChartLabels.push([months[d.getMonth()], d.getFullYear().toString()]);
@@ -257,7 +254,7 @@ export class LineChartComponent implements OnChanges {
     }
   }
 
-  setBarChartColors2() {
+  setChartColors() {
     this.barChartColors = [
       {//green
         // backgroundColor: '#fff',
@@ -278,44 +275,11 @@ export class LineChartComponent implements OnChanges {
         // pointHoverBorderColor: 'rgba(148,159,177,0.8)'
       },
     ];
-
-  }
-
-  convertUTCDateToLocalDate(date: string | number | Date) {
-    var d = new Date(date);
-    var time = d.getTime();
-    var offset = d.getTimezoneOffset() * 60 * 1000;
-    var nd = time - offset;
-    var newDate = new Date(nd);
-    return newDate;
-  }
-
-  async convertMilitaryTimeToStandardTime(time: string) {
-    var splitTime = time.split(':');
-    var _hrs = splitTime[0];
-    var _mins = splitTime[1];
-
-    if (parseInt(_hrs) > 12) {
-      _hrs = (parseInt(_hrs) - 12).toString();
-      if (parseInt(_hrs) < 10) {
-        // _hrs=("0"+_hrs).toString();
-      }
-      return _hrs + ":" + _mins + " pm";
+    if (this.mode == "endMonth") {
+      this.showChart = true;
     }
-    else if (parseInt(_hrs) < 12 && parseInt(_hrs) != 0) {
-      if (parseInt(_hrs) < 10) {
-        // _hrs=("0"+_hrs).toString();
-      }
-      return _hrs + ":" + _mins + " am";
-    }
-    else if (parseInt(_hrs) == 12) {
-      return "12:00 pm";
-    }
-    else if (parseInt(_hrs) == 0) {
-      return "12:00 am";
-    }
-    else {
-      return "";
+    else if (this.mode == "endMonth") {
+      this.showChart = false;
     }
   }
 }

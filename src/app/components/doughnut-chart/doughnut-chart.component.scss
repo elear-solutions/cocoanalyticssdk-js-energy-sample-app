@@ -1,24 +1,23 @@
-.chart {
-  margin-top:0px !important;
-  background-color: white;
+// .chart {
+//   margin-top:0px !important;
+//   background-color: white;
+//   padding:20px;
+// }
+
+.chart-container{
+  height: 100%;
   padding:20px;
 }
 
-.title{
-  font-size: 22px;
-  font-weight: 500;
-  color:#454E57;
-}
 #graph{
   position: relative;
   height: 100%;
   width: 100% !important;
+  height:265px !important;
 }
-canvas {
-  width: 100% !important;
-}
+
 .total{
-font-size:42px;
-font-weight:bold;
-color: #212121;
+  font-size:42px;
+  font-weight:bold;
+  color: #212121;
 }
