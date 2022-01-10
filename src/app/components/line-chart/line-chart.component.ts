@@ -33,7 +33,6 @@ export class LineChartComponent implements OnChanges {
             grid: {
               drawOnChartArea: false, // only want the grid lines for one axis to show up
             },
-            // gridLineWidth: 1,
             stacked: true,
             ticks: {
               maxTicksLimit: 0,
@@ -49,13 +48,8 @@ export class LineChartComponent implements OnChanges {
           stacked: true,
           ticks: {
             callback: function (label: { toString: () => string; }, index: any, labels: any) {
-              // return label.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + " kWh";
               return label.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "";
             },
-            // grid: {
-            //   display: false
-            // },
-            // gridLines: { display: false, color: "#333333" },
           },
         }]
       },
@@ -112,11 +106,6 @@ export class LineChartComponent implements OnChanges {
       borderWidth: 1
     }
   ];
-  // barChartData: ChartDataSets[] = [
-  //   { data: [45, 37, 60, 70, 46, 33], label: 'Best Fruits' },
-  //   { data: [45, 37, 60, 70, 46, 33], label: 'Best Fruits' }
-  // ];
-
   constructor() { }
 
   ngOnChanges(): void {
@@ -230,17 +219,6 @@ export class LineChartComponent implements OnChanges {
     var d = Utils.convertUTCDateToLocalDate(dateTime);
     var weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-    //To Do
-    // this.barChartLabels.push(months[d.getMonth()] + ' ' + d.getDate().toString());
-    // this.barChartLabels.push(months[d.getMonth()] + ' ' + d.getDate().toString());
-
-    // if (i % 2 === 0) {
-    //   this.barChartLabels.push(months[d.getMonth()] + ' ' + d.getDate().toString());
-    // }
-    // else {
-    //   this.barChartLabels.push("");
-    // }
   }
 
   getMonths(dateTime: any, i: number) {
@@ -257,22 +235,18 @@ export class LineChartComponent implements OnChanges {
   setChartColors() {
     this.barChartColors = [
       {//green
-        // backgroundColor: '#fff',
         borderColor: '#66A19C',
         pointBackgroundColor: '#fff',
         pointBorderColor: '#66A19C',
         pointHoverBackgroundColor: '#fff',
         color: '#fff'
-        // pointHoverBorderColor: 'rgba(148,159,177,0.8)'
       },
       { //yellow
-        // backgroundColor: '#fff',
         borderColor: '#F6B72B',
         pointBackgroundColor: '#fff',
         pointBorderColor: '#F6B72B',
         pointHoverBackgroundColor: '#fff',
         color: '#fff'
-        // pointHoverBorderColor: 'rgba(148,159,177,0.8)'
       },
     ];
     if (this.mode == "endMonth") {

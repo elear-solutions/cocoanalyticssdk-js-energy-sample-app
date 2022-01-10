@@ -137,42 +137,4 @@ export class ResourcesInZonesChartComponent implements OnChanges {
     console.log(this.analyticsData);
     this.spinnerService.setSpinner(false);
   }
-
-  getTimes(dateTime: any, i: number) {
-    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    var d = Utils.convertUTCDateToLocalDate(dateTime);
-    var hours = parseInt(d.getHours().toString()) < 10 ? "0" + d.getHours().toString() : d.getHours().toString();
-    var mins = parseInt(d.getMinutes().toString()) < 10 ? "0" + d.getMinutes().toString() : d.getMinutes().toString();
-    var time = (hours + ":" + mins);
-    var res = Utils.convertMilitaryTimeToStandardTime(time);
-    if (i % 2 === 0) {
-      // this.chartLabel.push([res, d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear().toString()]);
-    }
-    else {
-      // this.chartLabel.push("");
-    }
-  }
-
-  getDays(dateTime: any, i: number) {
-    var d = Utils.convertUTCDateToLocalDate(dateTime);
-    var weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    if (i % 2 === 0) {
-      // this.chartLabel.push(months[d.getMonth()] + ' ' + d.getDate().toString());
-    }
-    else {
-      // this.chartLabel.push("");
-    }
-  }
-
-  getMonths(dateTime: any, i: number) {
-    var d = Utils.convertUTCDateToLocalDate(dateTime);
-    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    if (i % 2 === 0) {
-      // this.chartLabel.push([months[d.getMonth()], d.getFullYear().toString()]);
-    }
-    else {
-      // this.chartLabel.push("");
-    }
-  }
 }
