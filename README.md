@@ -2,7 +2,7 @@
 
 
 ## pre-requisite
-1. create an Grove application with type SPA from https://manage.getcoco.buzz
+1. create an Grove application with type SPA from https://manage.getcoco.buzz, provide http://127.0.0.1 as redirect url
 2. Keep clientId and clientSecret to get access to coco where clientId won't be present for SPA type grove application. clientId is only required for C2C type
 3. Get SDK from link 
    * https://static-assets.getcoco.buzz/scripts/coco-analytics-sdk.min.js
@@ -42,9 +42,9 @@
 
 ## Steps to run the application
 1. npm ci
-2. Update client credentials 
-3. ng serve 
-4. Application runs on port http://localhost:4200
+2. Update client credentials in src/environments/environment.ts 
+3. ng serve --port 80
+4. Application runs on port http://127.0.0.1
 
 
 ## Note
