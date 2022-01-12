@@ -1,0 +1,11 @@
+<div *ngIf="isLoggedIn" class="app" tabindex="1">
+  <app-top-nav></app-top-nav>
+  <div class="parent">
+    <div class="main-nav-container">
+      <div class="loader" *ngIf="this.isLoading">
+      </div>
+      <app-total-home-consumption></app-total-home-consumption>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+<div class="top-nav " style="display:flex; justify-content:space-between;">
+  <div class="nav-item-logo">
+    <img class="logo" src="../../../assets/logo.png">
+  </div>
+  <div>
+    <ul class="nav fxlexbox white">
+      <li class="nav-item fb-profile lh-5-5">
+        <a class="nav-link">
+          <div class="btn-group" mdbDropdown>
+            <a class="nav-link lh-5-5" mdbDropdownToggle mdbWavesEffect type="button"
+              class="dropdown-toggle waves-light" mdbWavesEffect>
+              <img height="40px" width="40px" class="profile-image"
+                *ngIf="this.userDetails && this.userDetails['profileImageURL']"
+                [src]="this.userDetails['profileImageURL']" height="54px" width="54px">
+              <img *ngIf="!this.userDetails && !this.userDetails['profileImageURL']"
+                src="../../../assets/scalable-vector-graphics/default_image_upload.svg" height="54px" width="54px">
+              &nbsp;&nbsp;&nbsp;&nbsp;{{this.userDetails["fullName"]}}</a>
+            <div class="dropdown-menu dropdown-primary top-nav-dropdown-text">
+              <span class="name pl-25"><span class="mr-1">Hi,</span>{{this.userDetails["fullName"]}}!</span>
+              <a class="dropdown-item mb-25" (click)="logout();"><img
+                  src="../../../assets/scalable-vector-graphics/logout.svg"><span>Logout</span></a>
+            </div>
+          </div>
+        </a>
+      </li>
+
+    </ul>
+  </div>
+
+</div>

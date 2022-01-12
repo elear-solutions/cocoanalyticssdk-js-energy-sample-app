@@ -1,0 +1,23 @@
+// .chart {
+//   margin-top:0px !important;
+//   background-color: white;
+//   padding:20px;
+// }
+
+.chart-container{
+  height: 100%;
+  padding:20px;
+}
+
+#graph{
+  position: relative;
+  height: 100%;
+  width: 100% !important;
+  height:265px !important;
+}
+
+.total{
+  font-size:42px;
+  font-weight:bold;
+  color: #212121;
+}
