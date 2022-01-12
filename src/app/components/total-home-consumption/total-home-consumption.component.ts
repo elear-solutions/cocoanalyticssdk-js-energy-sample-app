@@ -121,7 +121,6 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
       this.selectedNetwork.categoryName = network.categoryName;
       this.showCurrentEnergyConsumed = true; //Show graph current energy consumed
       this.networkData = this.utils.getNetworkResources(this.selectedNetwork.networkId);
-      console.log(this.networkData);
       this.zones = this.networkData.zones;
       this.resources = this.networkData.resources;
       this.tempZones = this.networkData.zones;

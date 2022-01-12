@@ -127,11 +127,10 @@ export class Utils {
     this.networkService.getZoneNetworkList(networkId)
       .then((data: any) => {
         tempZones = data.response.zones;
-        var arr = [];
-        for (var i = 0; i < zones.length; i++) {
-          arr.push(0);
+        for (var i = 0; i < tempZones.length; i++) {
+          defaultData.push(0);
         }
-        defaultData = arr;
+        console.log("Default Data: ", defaultData);
       }, (error: any) => {
         console.log('getZoneNetworkList : ', error);
         return error;
@@ -147,14 +146,12 @@ export class Utils {
                   deviceNodeId: data.response.resources[i].deviceNodeId,
                 })
               }
-              console.log(resources);
           }, (error: any) => {
             console.log('getResourceZoneList : ', error);
             return error;
           });
         }
       });
-      console.log(zones, defaultData);
       return {resources: resources, zones: zones, defaultData: defaultData}
   }
 }
