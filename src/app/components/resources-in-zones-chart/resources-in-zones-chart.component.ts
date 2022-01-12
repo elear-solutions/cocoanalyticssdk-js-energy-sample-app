@@ -48,6 +48,7 @@ export class ResourcesInZonesChartComponent implements OnChanges {
   selectedResourceId: any;
   endDate: string = "";
   startDate: string = "";
+  dateRange: any;
   showIndividualResource: boolean = false;
   constructor(public spinnerService: SpinnerService) { }
 
@@ -57,28 +58,8 @@ export class ResourcesInZonesChartComponent implements OnChanges {
 
   setTimeResolution(resolution: string) {
     this.time.resolution = resolution;
-    this.setDates();
-  }
-  setDates() {
-    console.log(this.analyticsData);
-    var date = new Date();
-
-    if (this.time.resolution == "Hourly") {
-      this.endDate = date.toISOString().split('.')[0];
-      this.startDate = Utils.getRelativeHours(24);
-      this.fetchAnalyticsDataForIndividualResource(this.selectedResource);
-    }
-    else if (this.time.resolution == "Daily") {
-      this.endDate = date.toISOString().split('.')[0];
-      this.startDate = Utils.getRelativeDays(30);
-      this.fetchAnalyticsDataForIndividualResource(this.selectedResource);
-    }
-
-    else if (this.time.resolution == "Monthly") {
-      this.endDate = date.toISOString().split('.')[0];
-      this.startDate = Utils.getRelativeMonths(12);
-      this.fetchAnalyticsDataForIndividualResource(this.selectedResource);
-    }
+    this.dateRange = Utils.getDateRange(resolution);
+    this.fetchAnalyticsDataForIndividualResource(this.selectedResource);
   }
 
 
@@ -104,7 +85,7 @@ export class ResourcesInZonesChartComponent implements OnChanges {
   async fetchAnalyticsDataForIndividualResource(resource: any) {
     this.spinnerService.setSpinner(true);
     if (this.startDate != '' && this.endDate != '') {
-      this.time.dateRange = [this.startDate, this.endDate];
+      this.time.dateRange = [this.dateRange.startDate, this.dateRange.endDate];
     }
     await CocoAnalytics.fetchData(this.analyticsHandle, this.networkId, this.attributeInfo, this.filters, this.time, this.measure).then((response: any) => {
       this.analyticsData = response;
@@ -117,24 +98,7 @@ export class ResourcesInZonesChartComponent implements OnChanges {
         this.errorMessage = "";
       }, 5000);
     });
-
-    console.log("ANALYTICS HANDLE");
-    console.log(this.analyticsHandle);
-
-    console.log("NETWORK ID");
-    console.log(this.networkId);
-
-    console.log("ATTRIBUTE INFO");
-    console.log(this.attributeInfo);
-
-    console.log("FILTERS");
-    console.log(this.filters);
-
-    console.log("TIME");
-    console.log(this.time);
-
-    console.log("MEASURE");
-    console.log(this.analyticsData);
+    console.log("fetchAnalyticsDataForIndividualResource NETWORK ID: ", this.networkId, " ATTRIBUTE INFO: ", this.attributeInfo," FILTERS: ", this.filters, " TIME:", this.time, "analyticsData ", this.analyticsData);
     this.spinnerService.setSpinner(false);
   }
 }

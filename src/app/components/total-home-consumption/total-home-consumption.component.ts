@@ -4,7 +4,7 @@ import { NetworkService } from 'src/app/services/network.service';
 import { SpinnerService } from 'src/app/services/spinner.service';
 import { FormControl } from '@angular/forms';
 import { COCOHomeIcons } from 'src/app/utils/coco_home_icons';
-import { Utils } from 'src/app/utils/utils';
+import { Utils, Options } from 'src/app/utils/utils';
 import { debounceTime, } from 'rxjs/operators';
 declare var CocoAnalytics: any;
 declare var Coco: any;
@@ -53,32 +53,18 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
   startMonth: string = "";
   endMonth: string = "";
   selectedMeasure: any;
+  options = Options;
+  dateRange: any = {};
+  networkData: any = {};
 
   //Graphs
   showTotalHomeConsumption: boolean = false;
   showEnergyConsumedByZones: boolean = false;
   showMonthlyComparisons: boolean = false;
   showCurrentEnergyConsumed: boolean = false;
-
-  //Hard Coded values for Line Chart Comparisons
-  options = [
-    { label: 'Apr 2021', firstDay: '2021-04-01', lastDay: '2021-04-30' },
-    { label: 'May 2021', firstDay: '2021-05-01', lastDay: '2021-05-31' },
-    { label: 'Jun 2021', firstDay: '2021-06-01', lastDay: '2021-06-30' },
-    { label: 'Jul 2021', firstDay: '2021-07-01', lastDay: '2021-07-31' },
-    { label: 'Aug 2021', firstDay: '2021-08-01', lastDay: '2021-08-31' },
-    { label: 'Sep 2021', firstDay: '2021-09-01', lastDay: '2021-09-30' },
-    { label: 'Oct 2021', firstDay: '2021-10-01', lastDay: '2021-10-31' },
-    { label: 'Nov 2021', firstDay: '2021-11-01', lastDay: '2021-11-30' },
-    { label: 'Dec 2021', firstDay: '2021-12-01', lastDay: '2021-12-31' },
-    { label: 'Jan 2022', firstDay: '2022-01-01', lastDay: '2022-01-31' },
-    { label: 'Feb 2022', firstDay: '2022-02-01', lastDay: '2022-02-28' },
-    { label: 'March 2022', firstDay: '2022-03-01', lastDay: '2022-03-31' },
-    { label: 'April 2022', firstDay: '2022-04-01', lastDay: '2022-03-30' },
-  ];
   tempNetworks: any;
 
-  constructor(public userService: UserService, public networkService: NetworkService, public spinnerService: SpinnerService) {
+  constructor(public userService: UserService, public networkService: NetworkService, public spinnerService: SpinnerService, public utils: Utils) {
   }
 
   ngAfterViewInit() {
@@ -86,7 +72,6 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
       if (data != null) {
         //Get User Details
         this.userDetails = data;
-
         //Get List of Networks
         this.getNetworksList();
       }
@@ -101,16 +86,13 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
             if (network.networkName.toLowerCase().indexOf(data.toLowerCase()) >= 0) {
               tempArray.push(network);
             }
-            else {
-              // alert("val does not exists");
-            }
           });
         }
         this.networks = [];
         this.networks = tempArray;
       });
 
-    //Get access token and connect to CubeJS to get the analyticsHandle
+    //Get access token and connect to coco analytics to get the analyticsHandle
     Coco.getAccessToken().then(
       (data: any) => {
         var accessToken = data;
@@ -121,7 +103,7 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
     )
   }
 
-  //Get List of Networks
+  // Get List of Networks
   getNetworksList() {
     this.networkService.getNetworksList().then((res: any) => {
       this.networks = res.response.networks;
@@ -131,61 +113,30 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
 
   //On Selecting a network
   selectNetwork(network: any) {
-    var old_val = this.selectedNetwork.networkId;
-    if (old_val != network.networkId) {
+    var currentNetwork = this.selectedNetwork.networkId;
+    if (currentNetwork != network.networkId) {
       this.analyticsData = {};
       this.selectedNetwork.networkId = network.networkId;
       this.selectedNetwork.networkName = network.networkName;
       this.selectedNetwork.categoryName = network.categoryName;
       this.showCurrentEnergyConsumed = true; //Show graph current energy consumed
-      this.getNetworkZones();
+      this.networkData = this.utils.getNetworkResources(this.selectedNetwork.networkId);
+      console.log(this.networkData);
+      this.zones = this.networkData.zones;
+      this.resources = this.networkData.resources;
+      this.tempZones = this.networkData.zones;
+      this.doughnutAnalyticsData.data = this.networkData.defaultData;
+      this.selectedZone = (this.zones.length - 1);
+      setTimeout(() => {
+        this.setDefaultDatesForMonthlyComparison();
+      }, 500);
     }
-  }
-
-  //Get List of Zones By Network Id
-  getNetworkZones() {
-    this.networkService.getZoneNetworkList(this.selectedNetwork.networkId).then(
-      (data: any) => {
-        this.zones = data.response.zones;
-        this.selectedZone = this.zones[0].zoneId;
-        var arr = [];
-        for (var i = 0; i < this.zones.length; i++) {
-          arr.push(0);
-        }
-        this.doughnutAnalyticsData.data = arr;
-        this.tempZones = data.response.zones;
-        this.getResourcesByZone();
-      }, (error: any) => {
-        console.log('getZoneNetworkList : ', error);
-        return error;
-      });
-  }
-
-  //Get Resources by zone id
-  getResourcesByZone() {
-    for (var i = 0; i < this.zones.length; i++) {
-      this.networkService.getResourcesByZone(this.selectedNetwork.networkId, this.zones[i].zoneId).then(
-        (data: any) => {
-          for (var i = 0; i < data.response.resources.length; i++) {
-            this.resources.push({
-              resourceEui: data.response.resources[i].resourceEui,
-              deviceNodeId: data.response.resources[i].deviceNodeId,
-            })
-          }
-          console.log(this.resources);
-
-        }, (error: any) => {
-          console.log('getResourceZoneList : ', error);
-          return error;
-        });
-    }
-    setTimeout(() => {
-      this.setDefaultDatesForMonthlyComparison();
-    }, 500);
   }
 
   setDefaultDatesForMonthlyComparison() {
-    this.selectStartDate(this.options[8]);
+    setTimeout(() => {
+      this.selectStartDate(this.options[8]);
+    }, 500);
     setTimeout(() => {
       this.selectEndDate(this.options[9]);
     }, 500);
@@ -235,7 +186,6 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
       else {
         this.tempEndMonth = response;
       }
-
       if (Utils.isEmpty(this.tempStartMonth) == false && Utils.isEmpty(this.tempEndMonth) == false) {
         this.lineAnalyticsData = [];
         this.lineAnalyticsData.push(this.tempStartMonth);
@@ -251,22 +201,7 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
       }, 5000);
     });
 
-    console.log("ANALYTICS HANDLE");
-    console.log(this.analyticsHandle);
-
-    console.log("NETWORK ID");
-    console.log(this.selectedNetwork.networkId);
-
-    console.log("ATTRIBUTE INFO");
-    console.log(this.attributeInfo);
-
-    console.log("FILTERS");
-    console.log(this.filters);
-
-    console.log("TIME");
-    console.log(this.time);
-
-    console.log("MEASURE");
+    console.log("fetchAnalyticsDataForMonthlyComparisons NETWORK ID: ", this.selectedNetwork.networkId, " ATTRIBUTE INFO: ", this.attributeInfo," FILTERS: ", this.filters, " TIME:", this.time);
     console.log(this.lineAnalyticsData);
     this.lineAnalyticsData = {};
     this.spinnerService.setSpinner(false);
@@ -318,26 +253,9 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
   setTimeResolution(resolution: string) {
     this.resetGraphs1();
     this.resolution = resolution;
-    this.setDates();
-  }
-
-  setDates() {
-    var date = new Date();
-    if (this.resolution == "Hourly") {
-      this.endDate = date.toISOString().split('.')[0];
-      this.startDate = Utils.getRelativeHours(24);
-      this.fetchAnalyticsData();
-    }
-    else if (this.resolution == "Daily") {
-      this.endDate = date.toISOString().split('.')[0];
-      this.startDate = Utils.getRelativeDays(30);
-      this.fetchAnalyticsData();
-    }
-    else if (this.resolution == "Monthly") {
-      this.endDate = date.toISOString().split('.')[0];
-      this.startDate = Utils.getRelativeMonths(12);
-      this.fetchAnalyticsData();
-    }
+    this.dateRange = Utils.getDateRange(resolution);
+    console.log("Date Range: ", this.dateRange);
+    this.fetchAnalyticsData();
   }
 
   fetchAnalyticsData() {
@@ -349,9 +267,8 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
       resources: this.resources,
       zoneId: ""
     };
-
     this.time = {
-      dateRange: [this.startDate, this.endDate],
+      dateRange: [this.dateRange.startDate, this.dateRange.endDate],
       resolution: this.resolution
     };
     CocoAnalytics.fetchData(this.analyticsHandle, this.selectedNetwork.networkId, this.attributeInfo, this.filters, this.time, this.selectedMeasure).then((response: any) => {
@@ -367,22 +284,7 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
       }, 5000);
     });
 
-    console.log("ANALYTICS HANDLE");
-    console.log(this.analyticsHandle);
-
-    console.log("NETWORK ID");
-    console.log(this.selectedNetwork.networkId);
-
-    console.log("ATTRIBUTE INFO");
-    console.log(this.attributeInfo);
-
-    console.log("FILTERS");
-    console.log(this.filters);
-
-    console.log("TIME");
-    console.log(this.time);
-
-    console.log("MEASURE");
+    console.log("fetchAnalyticsData NETWORK ID: ", this.selectedNetwork.networkId, " ATTRIBUTE INFO: ", this.attributeInfo," FILTERS: ", this.filters, " TIME:", this.time);
     this.analyticsData = {};
 
     this.spinnerService.setSpinner(false);
@@ -391,52 +293,29 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
   async fetchAnalyticsDataForIndividualResource(resource: any, i: number) {
     this.spinnerService.setSpinner(true);
     this.submitted = true;
-    var attributeInfo = {
-      capabilityId: capabilityEnergyMeter,
-      attributeId: attributeEnergyMeterConsumption
-    };
-
     var filters = {};
     filters = {
       resources: [resource],
       zoneId: this.selectedZone
     };
-
     var time = {
       dateRange: [this.startDate, this.endDate],
       resolution: this.resolution
     };
-    await CocoAnalytics.fetchData(this.analyticsHandle, this.selectedNetwork.networkId, attributeInfo, filters, time, this.selectedMeasure).then((response: any) => {
-      this.analyticsData = response;
-      this.zoneResources[i].value = response.data[response.data.length - 1].value;
-      this.spinnerService.setSpinner(false);
-    }, (error: any) => {
-      this.spinnerService.setSpinner(false);
-      Utils.gotoTop();
-      this.errorMessage = error;
-      setTimeout(() => {
-        this.errorMessage = "";
-      }, 5000);
-    });
-
-    console.log("ANALYTICS HANDLE");
-    console.log(this.analyticsHandle);
-
-    console.log("NETWORK ID");
-    console.log(this.selectedNetwork.networkId);
-
-    console.log("ATTRIBUTE INFO");
-    console.log(attributeInfo);
-
-    console.log("FILTERS");
-    console.log(filters);
-
-    console.log("TIME");
-    console.log(time);
-
-    console.log("MEASURE");
+    await CocoAnalytics.fetchData(this.analyticsHandle, this.selectedNetwork.networkId, this.attributeInfo, filters, time, this.selectedMeasure)
+      .then((response: any) => {
+        this.analyticsData = response;
+        this.zoneResources[i].value = response.data[response.data.length - 1].value;
+        this.spinnerService.setSpinner(false);
+      }, (error: any) => {
+        this.spinnerService.setSpinner(false);
+        Utils.gotoTop();
+        this.errorMessage = error;
+        setTimeout(() => {
+          this.errorMessage = "";
+        }, 5000);
+      });
+    console.log("fetchAnalyticsDataForIndividualResource NETWORK ID: ", this.selectedNetwork.networkId, " ATTRIBUTE INFO: ", this.attributeInfo," FILTERS: ", this.filters, " TIME:", this.time);
     this.spinnerService.setSpinner(false);
   }
 }
-
-
