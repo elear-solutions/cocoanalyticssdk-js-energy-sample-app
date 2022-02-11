@@ -200,7 +200,7 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
       }, 5000);
     });
 
-    console.log("fetchAnalyticsDataForMonthlyComparisons NETWORK ID: ", this.selectedNetwork.networkId, " ATTRIBUTE INFO: ", this.attributeInfo," FILTERS: ", this.filters, " TIME:", this.time);
+    console.log("fetchAnalyticsDataForMonthlyComparisons NETWORK ID: ", this.selectedNetwork.networkId, " ATTRIBUTE INFO: ", this.attributeInfo, " FILTERS: ", this.filters, " TIME:", this.time);
     console.log(this.lineAnalyticsData);
     this.lineAnalyticsData = {};
     this.spinnerService.setSpinner(false);
@@ -270,7 +270,7 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
       dateRange: [this.dateRange.startDate, this.dateRange.endDate],
       resolution: this.resolution
     };
-    CocoAnalytics.fetchData(this.analyticsHandle, this.selectedNetwork.networkId, this.attributeInfo, this.filters, this.time, this.selectedMeasure).then((response: any) => {
+    CocoAnalytics.fetchData(this.analyticsHandle, this.selectedNetwork.networkId, this.attributeInfo, this.selectedMeasure, this.time, this.filters).then((response: any) => {
 
       this.analyticsData = response;
       this.spinnerService.setSpinner(false);
@@ -283,7 +283,7 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
       }, 5000);
     });
 
-    console.log("fetchAnalyticsData NETWORK ID: ", this.selectedNetwork.networkId, " ATTRIBUTE INFO: ", this.attributeInfo," FILTERS: ", this.filters, " TIME:", this.time);
+    console.log("fetchAnalyticsData NETWORK ID: ", this.selectedNetwork.networkId, " ATTRIBUTE INFO: ", this.attributeInfo, " FILTERS: ", this.filters, " TIME:", this.time);
     this.analyticsData = {};
 
     this.spinnerService.setSpinner(false);
@@ -314,7 +314,7 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
           this.errorMessage = "";
         }, 5000);
       });
-    console.log("fetchAnalyticsDataForIndividualResource NETWORK ID: ", this.selectedNetwork.networkId, " ATTRIBUTE INFO: ", this.attributeInfo," FILTERS: ", this.filters, " TIME:", this.time);
+    console.log("fetchAnalyticsDataForIndividualResource NETWORK ID: ", this.selectedNetwork.networkId, " ATTRIBUTE INFO: ", this.attributeInfo, " FILTERS: ", this.filters, " TIME:", this.time);
     this.spinnerService.setSpinner(false);
   }
 }
