@@ -6,3 +6,9 @@ export class User {
   acctVerified!: string;
   profileImageURL!: string;
 }
+
+export class Network {
+  networkId!: string;
+  networkName!: string;
+  categoryName!: string;
+}

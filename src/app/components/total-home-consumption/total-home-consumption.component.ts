@@ -8,6 +8,7 @@ import { Utils } from 'src/app/utils/utils';
 import { debounceTime, } from 'rxjs/operators';
 declare var CocoAnalytics: any;
 declare var Coco: any;
+import { Network } from 'src/app/models/user';
 
 //Capability and Attribute Settings
 const capabilityEnergyMeter: number = 4;
@@ -32,10 +33,11 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
   networks: any[] = [];
   resources: any[] = [];
   zoneResources: any[] = [];
-  selectedNetwork: any = {
-    networkId: "",
-    networkName: ""
-  };
+  // selectedNetwork: any = {
+  //   networkId: "",
+  //   networkName: ""
+  // };
+  selectedNetwork: Network = new Network();
   zones: any[] = [];
   selectedZone: any;
   searchNetworkCtrl: FormControl = new FormControl();
@@ -88,7 +90,10 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
         this.userDetails = data;
 
         //Get List of Networks
-        this.getNetworksList();
+        this.networkService.getNetworksList().then((res: any) => {
+          this.networks = res.response.networks;
+          this.tempNetworks = this.networks;
+        });
       }
     });
 
@@ -121,22 +126,23 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
     )
   }
 
-  //Get List of Networks
-  getNetworksList() {
-    this.networkService.getNetworksList().then((res: any) => {
-      this.networks = res.response.networks;
-      this.tempNetworks = res.response.networks;
-    })
-  }
+  // //Get List of Networks
+  // getNetworksList() {
+  //   this.networkService.getNetworksList().then((res: any) => {
+  //     this.networks = res.response.networks;
+  //     this.tempNetworks = res.response.networks;
+  //   })
+  // }
 
   //On Selecting a network
   selectNetwork(network: any) {
     var old_val = this.selectedNetwork.networkId;
     if (old_val != network.networkId) {
       this.analyticsData = {};
-      this.selectedNetwork.networkId = network.networkId;
-      this.selectedNetwork.networkName = network.networkName;
-      this.selectedNetwork.categoryName = network.categoryName;
+      this.selectedNetwork = network;
+      // this.selectedNetwork.networkId = network.networkId;
+      // this.selectedNetwork.networkName = network.networkName;
+      // this.selectedNetwork.categoryName = network.categoryName;
       this.showCurrentEnergyConsumed = true; //Show graph current energy consumed
       this.getNetworkZones();
     }
@@ -228,7 +234,7 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
     this.spinnerService.setSpinner(true);
     this.submitted = true;
 
-    CocoAnalytics.fetchData(this.analyticsHandle, this.selectedNetwork.networkId, this.attributeInfo, this.filters, this.time, this.selectedMeasure).then((response: any) => {
+    CocoAnalytics.fetchData(this.analyticsHandle, this.selectedNetwork.networkId, this.attributeInfo, this.selectedMeasure, this.time, this.filters).then((response: any) => {
       if (mode == 'startMonth') {
         this.tempStartMonth = response;
       }

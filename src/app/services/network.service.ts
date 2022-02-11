@@ -43,6 +43,34 @@ export class NetworkService {
           return error;
         });
   }
+
+  public getNetworksList1(): any {
+    this.spinnerService.setSpinner(true);
+    const url = this.baseURL + "/network-manager/networks";
+    return Coco.api(
+      {
+        "url": url,
+        "method": "GET",
+        "headers": {
+          'Content-Type': 'application/json; charset=utf-8'
+        },
+        "responseType": ""
+      }).then(
+        (data: any) => {
+          this.spinnerService.setSpinner(false);
+          return data;
+        },
+        (error: any) => {
+          this.spinnerService.setSpinner(false);
+          if (error.response) {
+            var err = error.response['error']['message'];
+            console.log('Error :  Get Networks List', err);
+          }
+          // this.errorHandler(error);
+          return error;
+        });
+  }
+
   public getZonesByNetwork(networkId: any) {
     this.spinnerService.setSpinner(true);
     const url = this.baseURL + "/network-manager/networks/" + networkId + "/zones";

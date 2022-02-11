@@ -1,6 +1,7 @@
 import * as moment from "moment";
 
 export class Utils {
+
   static getRelativeHours(hr: any) {
     var date = new Date();
     var relativeDateTime = moment(date).subtract('hours', hr); //to get the date object
