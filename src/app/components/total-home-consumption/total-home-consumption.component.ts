@@ -23,6 +23,8 @@ const attributeEnergyMeterConsumption: number = 0;
 export class TotalHomeConsumptionComponent implements AfterViewInit {
   errorMessage: string = "";
   analyticsData: any = {};
+  groupByZoneAnalyticsData: any = {};
+  groupByResourceAnalyticsData: any = {};
   analyticsHandle: any;
   doughnutAnalyticsData: any = {};
   lineAnalyticsData: any = [];
@@ -219,7 +221,7 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
     this.filters = {};
     this.filters = {
       resources: this.resources,
-      zoneId: ""
+      zoneId: ''
     };
     this.time = {
       dateRange: [this.startDate, this.endDate],
@@ -301,6 +303,7 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
   //On click of a zone
   selectZone(zoneId: any, i: any) {
     if (zoneId != undefined) {
+      alert("slect zone");
       this.selectedZone = zoneId;
       this.getResourcesByZoneId();
     }
@@ -318,7 +321,7 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
     this.showTotalHomeConsumption = false;
     this.showEnergyConsumedByZones = false;
     this.showTotalHomeConsumption = true;
-    this.showEnergyConsumedByZones = true;
+    this.showEnergyConsumedByZones = false;
   }
 
   setTimeResolution(resolution: string) {
@@ -333,16 +336,22 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
       this.endDate = date.toISOString().split('.')[0];
       this.startDate = Utils.getRelativeHours(24);
       this.fetchAnalyticsData();
+      this.groupData("Zone");
+      this.groupData("Resource");
     }
     else if (this.resolution == "Daily") {
       this.endDate = date.toISOString().split('.')[0];
       this.startDate = Utils.getRelativeDays(30);
       this.fetchAnalyticsData();
+      this.groupData("Zone");
+      this.groupData("Resource");
     }
     else if (this.resolution == "Monthly") {
       this.endDate = date.toISOString().split('.')[0];
       this.startDate = Utils.getRelativeMonths(12);
       this.fetchAnalyticsData();
+      this.groupData("Zone");
+      this.groupData("Resource");
     }
   }
 
@@ -360,8 +369,7 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
       dateRange: [this.startDate, this.endDate],
       resolution: this.resolution
     };
-    CocoAnalytics.fetchData(this.analyticsHandle, this.selectedNetwork.networkId, this.attributeInfo, this.filters, this.time, this.selectedMeasure).then((response: any) => {
-
+    CocoAnalytics.fetchData(this.analyticsHandle, this.selectedNetwork.networkId, this.attributeInfo, this.selectedMeasure, this.time, this.filters).then((response: any) => {
       this.analyticsData = response;
       this.spinnerService.setSpinner(false);
     }, (error: any) => {
@@ -390,6 +398,60 @@ export class TotalHomeConsumptionComponent implements AfterViewInit {
 
     console.log("MEASURE");
     this.analyticsData = {};
+
+    this.spinnerService.setSpinner(false);
+  }
+
+  groupData(groupBy: string) {
+    this.showEnergyConsumedByZones = true;
+    this.spinnerService.setSpinner(true);
+    this.submitted = true;
+
+    this.filters = {};
+    this.filters = {
+      resources: this.resources,
+      zoneId: groupBy == 'Resource' ? this.selectedZone : ''
+    };
+
+    this.time = {
+      dateRange: [this.startDate, this.endDate],
+      resolution: this.resolution
+    };
+    CocoAnalytics.groupData(this.analyticsHandle, this.selectedNetwork.networkId, this.attributeInfo, this.selectedMeasure, this.time, groupBy, this.filters).then((response: any) => {
+      if (groupBy == 'Zone') {
+        this.groupByZoneAnalyticsData = response;
+      }
+      else {
+        this.groupByResourceAnalyticsData = response;
+      }
+
+      this.spinnerService.setSpinner(false);
+    }, (error: any) => {
+      this.spinnerService.setSpinner(false);
+      Utils.gotoTop();
+      this.errorMessage = error;
+      setTimeout(() => {
+        this.errorMessage = "";
+      }, 5000);
+    });
+
+    console.log("group by ANALYTICS HANDLE");
+    console.log(this.analyticsHandle);
+
+    console.log("NETWORK ID");
+    console.log(this.selectedNetwork.networkId);
+
+    console.log("ATTRIBUTE INFO");
+    console.log(this.attributeInfo);
+
+    console.log("FILTERS");
+    console.log(this.filters);
+
+    console.log("TIME");
+    console.log(this.time);
+
+    console.log("MEASURE");
+    this.groupByZoneAnalyticsData = {};
 
     this.spinnerService.setSpinner(false);
   }

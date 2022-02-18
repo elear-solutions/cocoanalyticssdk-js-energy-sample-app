@@ -24,6 +24,7 @@ export class DoughnutChartComponent implements OnChanges {
 
   showChart: boolean = false;
   alertThreshold = 3500;
+  total: number = 0;
 
   public chartOptions: any = {
     responsive: true,
@@ -67,24 +68,24 @@ export class DoughnutChartComponent implements OnChanges {
   }
 
   getEnergyConsumedByZones() {
+    // this.dataset.data = [{ value: '20', zoneName: "Living Room" }, { value: '20', zoneName: "Nursery Room" }, { value: '20', zoneName: "Kitchen Room" }, { value: '20', zoneName: "Sun Room" }, { value: '20', zoneName: "Game Room" }, { value: '20', zoneName: "Baby Room" }, { value: '20', zoneName: "Default Room" }];
 
-    //To be removed in Phase 2
-    for (var i = 0; i < this.zones?.length; i++) {
-      this.chartLabels.push(this.zones[i].zoneName + '   ' + 'N/A Kw');
-      this.chartData.push(1);
+    for (var i = 0; i < this.dataset?.data?.length; i++) {
+      this.chartLabels.push(this.dataset.data[i].zoneName + ' ' + this.dataset.data[i].value + ' Kw');
+      this.total = this.total + this.dataset.data[i].value;
+      this.chartData.push(this.dataset.data[i].value);
     }
     this.showChart = true;
   }
 
   //To be removed in Phase 2
   getEnergyConsumedByResources() {
-    for (var i = 0; i < this.resources?.length; i++) {
-      this.chartLabels.push(this.resources[i].name + '   ' + 'N/A Kw')
-      this.chartData.push(1);
+    for (var i = 0; i < this.dataset?.data?.length; i++) {
+      this.chartLabels.push(this.dataset.data[i].resourceName + ' ' + this.dataset.data[i].value + ' Kw')
+      this.chartData.push(this.dataset.data[i].value);
     }
-
     if (!this.resources) {
-      this.chartData.push(1);
+      // this.chartData.push(1);
     }
     this.showChart = true;
   }
@@ -93,8 +94,7 @@ export class DoughnutChartComponent implements OnChanges {
     beforeDraw: (chart: any) => {
       var lineHeight = 25;
       const ctx = chart.ctx;
-      // const txt = this.total;
-      const txt = "N/A";
+      const txt = this.total;
 
       //Get options from the center object in options
       const sidePadding = 60;
@@ -145,7 +145,7 @@ export class DoughnutChartComponent implements OnChanges {
           ctx.font = "bold " + fontSizeToUse + "px Quicksand";
           // ctx.lineHeight = "1rem";
           // ctx.fillText(this.total, centerX, centerY);
-          ctx.fillText('N/A', centerX, centerY);
+          ctx.fillText(this.total, centerX, centerY);
         }
         else if (i == 1) {
           const fontSizeToUse = Math.min(newFontSize2, elementHeight);

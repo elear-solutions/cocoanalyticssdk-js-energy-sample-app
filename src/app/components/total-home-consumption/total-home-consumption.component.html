@@ -60,7 +60,7 @@
                 </div>
               </div>
               <div class="chart-container-right bg-white">
-                <app-doughnut-chart *ngIf="showEnergyConsumedByZones" [dataset]="this.doughnutAnalyticsData"
+                <app-doughnut-chart *ngIf="showEnergyConsumedByZones" [dataset]="this.groupByZoneAnalyticsData"
                   [zones]="this.zones" [timeResolution]="this.resolution" title="Energy Consumed By Zones" mode="zones">
                 </app-doughnut-chart>
                 <div *ngIf="!showEnergyConsumedByZones" class="analytics">
@@ -142,13 +142,16 @@
             <mdb-tab *ngFor="let zone of zones; let i=index;" [heading]="zone.zoneName"
               (select)="selectZone(zone.zoneId,i)">
               <div *ngIf="this.selectedNetwork && this.resolution">
-                <app-resources-in-zones-chart chartType="doughnut" [dataset]="this.doughnutAnalyticsData"
+                <!-- <app-resources-in-zones-chart chartType="doughnut" [dataset]="this.doughnutAnalyticsData"
                   [resources]="this.zoneResources" [attributeInfo]="attributeInfo"
                   [networkId]="this.selectedNetwork.networkId" [filters]="this.filters"
                   [timeResolution]="this.resolution" [time]="this.time" [analyticsHandle]="this.analyticsHandle"
                   [measure]="this.selectedMeasure" [selectedZone]="this.selectedZone" title="Resources In Zones"
                   [doughnutAnalyticsData]="doughnutAnalyticsData">
-                </app-resources-in-zones-chart>
+                </app-resources-in-zones-chart> -->
+                <app-doughnut-chart *ngIf="showEnergyConsumedByZones" [dataset]="this.groupByResourceAnalyticsData"
+                  [zones]="this.zones" [timeResolution]="this.resolution" title="Resources In Zones" mode="resources">
+                </app-doughnut-chart>
               </div>
             </mdb-tab>
           </mdb-tabset>
